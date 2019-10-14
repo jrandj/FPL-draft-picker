@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 import config
-
+from tabulate import tabulate
 
 # Import data from draft.premierleague.com and members.fantasyfootballscout.co.uk
 def import_data(myLeague):
@@ -85,11 +85,23 @@ def consolidate_data(fplAvailabilityData, fplPlayerData, myTeam):
 
 # Print available players with a higher projected score against my team and their projected score
 def print_candidates(fplPlayerData):
+    myTeam = []
+    printList = []
+    sortedPrintList = []
+
     for i in range(len(fplPlayerData['elements'])):
         if fplPlayerData['elements'][i]['selected'] == 'Yes':
-            print(str(fplPlayerData['elements'][i]['web_name']) + ' ' + str(fplPlayerData['elements'][i]['GW9-14 Pts'])
-                  + ' ' + str(fplPlayerData['elements'][i]['candidates']))
-    return 1
+            myTeam.append(fplPlayerData['elements'][i])
+
+    for i in myTeam:
+        printDict = {k: v for k, v in i.items() if
+                     k in ['web_name', 'position_name', 'team_name', 'candidates', 'GW9-14 Pts']}
+        printList.append(printDict)
+
+    sortedPrintList = sorted(printList, key=lambda x: (x['position_name'],
+                                                       x['team_name'], x['web_name'], x['GW9-14 Pts']))
+    print(tabulate(sortedPrintList, headers="keys", tablefmt="rst"))
+    return
 
 
 # Get team ID
