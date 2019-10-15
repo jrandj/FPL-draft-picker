@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 import config
 from tabulate import tabulate
+pd.options.mode.chained_assignment = None  # default='warn'
+
 
 # Import data from draft.premierleague.com and members.fantasyfootballscout.co.uk
 def import_data(myLeague):
@@ -37,6 +39,7 @@ def clean_projections(projectionsData):
 # Find available players who have a better six game projection than my players
 def find_candidates(fplPlayerData, projectionsData):
     df = pd.DataFrame.from_dict(fplPlayerData['elements'])
+    sixGameProjection = projectionsData[0].columns.values[-2]
     # NOTE: Need to get the merge to be 1-1
     projectionsData = clean_projections(projectionsData)
     df1 = df.merge(projectionsData[0], left_on=['web_name_clean', 'team_name', 'position_name'],
@@ -49,9 +52,9 @@ def find_candidates(fplPlayerData, projectionsData):
         if d1[i]['selected'] == 'Yes':
             for j in range(len(d1)):
                 # NOTE: The GW column names will change, need to fix
-                if (d1[j]['GW9-14 Pts'] > d1[i]['GW9-14 Pts']) and (d1[i]['Pos'] == d1[j]['Pos']) and \
+                if (d1[j][sixGameProjection] > d1[i][sixGameProjection]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
                         (d1[j]['selected'] == 'No') and (d1[j]['available'] == 'Yes'):
-                    candidates[d1[j]['web_name']] = d1[j]['GW9-14 Pts']
+                    candidates[d1[j]['web_name']] = d1[j][sixGameProjection]
             sorted_candidates = sorted(candidates.items(), key=lambda x: x[1], reverse=True)
             d1[i]['candidates'] = sorted_candidates
         fplPlayerData['elements'] = d1
@@ -84,10 +87,10 @@ def consolidate_data(fplAvailabilityData, fplPlayerData, myTeam):
 
 
 # Print available players with a higher projected score against my team and their projected score
-def print_candidates(fplPlayerData):
+def print_candidates(fplPlayerData, projectionsData):
     myTeam = []
     printList = []
-    sortedPrintList = []
+    sixGameProjection = projectionsData[0].columns.values[-2]
 
     for i in range(len(fplPlayerData['elements'])):
         if fplPlayerData['elements'][i]['selected'] == 'Yes':
@@ -95,11 +98,11 @@ def print_candidates(fplPlayerData):
 
     for i in myTeam:
         printDict = {k: v for k, v in i.items() if
-                     k in ['web_name', 'position_name', 'team_name', 'candidates', 'GW9-14 Pts']}
+                     k in ['web_name', 'position_name', 'team_name', 'candidates', sixGameProjection]}
         printList.append(printDict)
 
     sortedPrintList = sorted(printList, key=lambda x: (x['position_name'],
-                                                       x['team_name'], x['web_name'], x['GW9-14 Pts']))
+                                                       x['team_name'], x['web_name'], x[sixGameProjection]))
     print(tabulate(sortedPrintList, headers="keys", tablefmt="rst"))
     return
 
@@ -124,7 +127,7 @@ def main():
     fplAvailabilityData, fplPlayerData, projectionsData = import_data(myLeague)
     fplPlayerData = consolidate_data(fplAvailabilityData, fplPlayerData, myTeam)
     fplPlayerData = find_candidates(fplPlayerData, projectionsData)
-    print_candidates(fplPlayerData)
+    print_candidates(fplPlayerData, projectionsData)
 
 
 main()
