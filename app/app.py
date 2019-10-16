@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 import config
 from tabulate import tabulate
+import math
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
@@ -22,7 +23,7 @@ def import_data(myLeague):
 
 # Remove unicode characters so that names can be compared across fplPlayerData and projectionsData
 def strip_unicode(myString):
-    myString = myString.translate(str.maketrans({'í': 'i', 'ï': 'i', 'ß': 's', 'á': 'a', 'ä': 'a', 'é': 'e', 'ñ': 'n',
+    myString = myString.translate(str.maketrans({'í': 'i', 'ï': 'i', 'ß': 'ss', 'á': 'a', 'ä': 'a', 'é': 'e', 'ñ': 'n',
                                                  'ć': 'c', 'š': 's', 'Ö': 'o', 'ö': 'o', 'ó': 'o', 'ø': 'o', 'ü': 'u'}))
     return myString
 
@@ -33,6 +34,13 @@ def clean_projections(projectionsData):
     projectionsData[0]['Team'].loc[projectionsData[0]['Team'] == 'SOT'] = 'SOU'
     projectionsData[0]['Team'].loc[projectionsData[0]['Team'] == 'WHM'] = 'WHU'
     projectionsData[0]['Pos'].loc[projectionsData[0]['Pos'] == 'GK'] = 'GKP'
+    projectionsData[0]['Name'].loc[projectionsData[0]['Name'].str.contains('Buend<ed>a')] = 'Buendia'
+    projectionsData[0]['Name'].loc[projectionsData[0]['Name'].str.contains('Femenia') &
+                                   projectionsData[0]['Team'].str.contains('WAT')] = 'Kiko Femenia'
+    projectionsData[0]['Name'].loc[projectionsData[0]['Name'].str.contains('Gomes') &
+                                   projectionsData[0]['Team'].str.contains('EVE')] = 'Andre Gomes'
+    projectionsData[0]['Name'].loc[projectionsData[0]['Name'].str.contains('Sanchez') &
+                                   projectionsData[0]['Team'].str.contains('WHU')] = 'Carlos Sanchez'
     return projectionsData
 
 
@@ -40,24 +48,22 @@ def clean_projections(projectionsData):
 def find_candidates(fplPlayerData, projectionsData):
     df = pd.DataFrame.from_dict(fplPlayerData['elements'])
     sixGameProjection = projectionsData[0].columns.values[-2]
-    # NOTE: Need to get the merge to be 1-1
     projectionsData = clean_projections(projectionsData)
-    df1 = df.merge(projectionsData[0], left_on=['web_name_clean', 'team_name', 'position_name'],
+    # Left join fplPlayerData onto projections
+    df1 = df.merge(projectionsData[0], how='left', left_on=['web_name_clean', 'team_name', 'position_name'],
                    right_on=['Name', 'Team', 'Pos'])
     d1 = df1.to_dict(orient='records')
 
     for i in range(len(d1)):
         candidates = {}
-        sorted_candidates = {}
+        fplPlayerData['elements'][i][sixGameProjection] = d1[i][sixGameProjection]
         if d1[i]['selected'] == 'Yes':
             for j in range(len(d1)):
-                # NOTE: The GW column names will change, need to fix
                 if (d1[j][sixGameProjection] > d1[i][sixGameProjection]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
                         (d1[j]['selected'] == 'No') and (d1[j]['available'] == 'Yes'):
                     candidates[d1[j]['web_name']] = d1[j][sixGameProjection]
             sorted_candidates = sorted(candidates.items(), key=lambda x: x[1], reverse=True)
-            d1[i]['candidates'] = sorted_candidates
-        fplPlayerData['elements'] = d1
+            fplPlayerData['elements'][i]['candidates'] = sorted_candidates
     return fplPlayerData
 
 
@@ -82,7 +88,6 @@ def consolidate_data(fplAvailabilityData, fplPlayerData, myTeam):
                     fplPlayerData['elements'][i]['selected'] = 'Yes'
                 if fplPlayerData['elements'][i]['status'] != 'u' and j['owner'] is None:
                     fplPlayerData['elements'][i]['available'] = 'Yes'
-
     return fplPlayerData
 
 
@@ -90,20 +95,24 @@ def consolidate_data(fplAvailabilityData, fplPlayerData, myTeam):
 def print_candidates(fplPlayerData, projectionsData):
     myTeam = []
     printList = []
+    nanCount = 0
     sixGameProjection = projectionsData[0].columns.values[-2]
 
     for i in range(len(fplPlayerData['elements'])):
         if fplPlayerData['elements'][i]['selected'] == 'Yes':
             myTeam.append(fplPlayerData['elements'][i])
+        if math.isnan(fplPlayerData['elements'][i][sixGameProjection]):
+            nanCount = nanCount + 1
 
     for i in myTeam:
         printDict = {k: v for k, v in i.items() if
-                     k in ['web_name', 'position_name', 'team_name', 'candidates', sixGameProjection]}
+                     k in ['web_name', 'team_name', 'position_name',  sixGameProjection, 'candidates']}
         printList.append(printDict)
-
-    sortedPrintList = sorted(printList, key=lambda x: (x['position_name'],
-                                                       x['team_name'], x['web_name'], x[sixGameProjection]))
+    sortedPrintList = sorted(printList, key=lambda x: (x['web_name'], x['team_name'], x['position_name'],
+                                                         x[sixGameProjection], x['candidates']))
     print(tabulate(sortedPrintList, headers="keys", tablefmt="rst"))
+    print(str(len(fplPlayerData['elements'])) + " players have been matched to "
+          + str((len(fplPlayerData['elements'])-nanCount)) + " projections.")
     return
 
 
