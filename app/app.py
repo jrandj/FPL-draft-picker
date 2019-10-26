@@ -47,9 +47,15 @@ def clean_projections(projectionsData):
 # Find available players who have a better six game projection than my players
 def find_candidates(fplPlayerData, projectionsData):
     df = pd.DataFrame.from_dict(fplPlayerData['elements'])
-    sixGameProjection = projectionsData[0].columns.values[-2]
     projectionsData = clean_projections(projectionsData)
-    # Left join fplPlayerData onto projections
+    sixGameProjection = projectionsData[0].columns.values[-2]
+    nextGameWeek = projectionsData[0].columns.values[-8]
+    nextGameWeekPlusOne = projectionsData[0].columns.values[-7]
+    nextGameWeekPlusTwo = projectionsData[0].columns.values[-6]
+    nextGameWeekPlusThree = projectionsData[0].columns.values[-5]
+    nextGameWeekPlusFour = projectionsData[0].columns.values[-4]
+    nextGameWeekPlusFive = projectionsData[0].columns.values[-3]
+    # Left join fplPlayerData onto projections using a key of player name, team name and position name
     df1 = df.merge(projectionsData[0], how='left', left_on=['web_name_clean', 'team_name', 'position_name'],
                    right_on=['Name', 'Team', 'Pos'])
     d1 = df1.to_dict(orient='records')
@@ -57,6 +63,12 @@ def find_candidates(fplPlayerData, projectionsData):
     for i in range(len(d1)):
         candidates = {}
         fplPlayerData['elements'][i][sixGameProjection] = d1[i][sixGameProjection]
+        fplPlayerData['elements'][i][nextGameWeek] = d1[i][nextGameWeek]
+        fplPlayerData['elements'][i][nextGameWeekPlusOne] = d1[i][nextGameWeekPlusOne]
+        fplPlayerData['elements'][i][nextGameWeekPlusTwo] = d1[i][nextGameWeekPlusTwo]
+        fplPlayerData['elements'][i][nextGameWeekPlusThree] = d1[i][nextGameWeekPlusThree]
+        fplPlayerData['elements'][i][nextGameWeekPlusFour] = d1[i][nextGameWeekPlusFour]
+        fplPlayerData['elements'][i][nextGameWeekPlusFive] = d1[i][nextGameWeekPlusFive]
         if d1[i]['selected'] == 'Yes':
             for j in range(len(d1)):
                 if (d1[j][sixGameProjection] > d1[i][sixGameProjection]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
@@ -96,23 +108,43 @@ def print_candidates(fplPlayerData, projectionsData):
     myTeam = []
     printList = []
     nanCount = 0
-    sixGameProjection = projectionsData[0].columns.values[-2]
+    inactiveCount = 0
+    sixGameProjectionHeader = projectionsData[0].columns.values[-2]
+    nextGameWeekHeader = projectionsData[0].columns.values[-8]
+    nextGameWeekPlusOneHeader = projectionsData[0].columns.values[-7]
+    nextGameWeekPlusTwoHeader = projectionsData[0].columns.values[-6]
+    nextGameWeekPlusThreeHeader = projectionsData[0].columns.values[-5]
+    nextGameWeekPlusFourHeader = projectionsData[0].columns.values[-4]
+    nextGameWeekPlusFiveHeader = projectionsData[0].columns.values[-3]
 
     for i in range(len(fplPlayerData['elements'])):
         if fplPlayerData['elements'][i]['selected'] == 'Yes':
             myTeam.append(fplPlayerData['elements'][i])
-        if math.isnan(fplPlayerData['elements'][i][sixGameProjection]):
+        if math.isnan(fplPlayerData['elements'][i][sixGameProjectionHeader]):
             nanCount = nanCount + 1
+        if fplPlayerData['elements'][i]['status'] == 'u':
+            inactiveCount = inactiveCount + 1
 
     for i in myTeam:
-        printDict = {k: v for k, v in i.items() if
-                     k in ['web_name', 'team_name', 'position_name',  sixGameProjection, 'candidates']}
+        printDict = {k: v for k, v in i.items() if k in {'web_name', 'team_name', 'position_name',
+                                                         sixGameProjectionHeader, nextGameWeekHeader,
+                                                         nextGameWeekPlusOneHeader, nextGameWeekPlusTwoHeader,
+                                                         nextGameWeekPlusThreeHeader, nextGameWeekPlusFourHeader,
+                                                         nextGameWeekPlusFiveHeader, 'candidates'}}
         printList.append(printDict)
+
     sortedPrintList = sorted(printList, key=lambda x: (x['web_name'], x['team_name'], x['position_name'],
-                                                         x[sixGameProjection], x['candidates']))
+                                                       x[sixGameProjectionHeader], x[nextGameWeekHeader],
+                                                       x[nextGameWeekPlusOneHeader], x[nextGameWeekPlusTwoHeader],
+                                                       x[nextGameWeekPlusThreeHeader], x[nextGameWeekPlusFourHeader],
+                                                       x[nextGameWeekPlusFiveHeader], x['candidates']))
     print(tabulate(sortedPrintList, headers="keys", tablefmt="rst"))
-    print(str(len(fplPlayerData['elements'])) + " players have been matched to "
-          + str((len(fplPlayerData['elements'])-nanCount)) + " projections.")
+    '''
+    Let's see how good our JOIN was (there are a small number of players that don't have projections for some reason)
+    Any differences here could be corrupted data (or special characters) in the members.fantasyfootballscout.co.uk scout data
+    '''
+    print(str(len(fplPlayerData['elements'])-inactiveCount) + " active players have been matched to "
+          + str(len(fplPlayerData['elements'])-nanCount) + " projections.")
     return
 
 
