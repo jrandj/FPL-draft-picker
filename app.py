@@ -138,7 +138,7 @@ def print_candidates(fplPlayerData, projectionsData):
                                                        x[nextGameWeekPlusOneHeader], x[nextGameWeekPlusTwoHeader],
                                                        x[nextGameWeekPlusThreeHeader], x[nextGameWeekPlusFourHeader],
                                                        x[nextGameWeekPlusFiveHeader], x['candidates']))
-    print(tabulate(sortedPrintList, headers="keys", tablefmt="rst"))
+    print(tabulate(sortedPrintList, headers="keys", tablefmt="github"))
     '''
     Let's see how good our JOIN was (there are a small number of players that don't have projections for some reason)
     Any differences here could be corrupted data (or special characters) in the members.fantasyfootballscout.co.uk  data
