@@ -24,6 +24,7 @@ Sample output is shown below:
 | Stephens      | SOU         | DEF             |          11.6 | [('Laporte', 18.0), ('Mina', 15.5), ('Rüdiger', 15.0), ('Sidibé', 14.7), ('James', 13.8), ('Holgate', 13.6), ('Cresswell', 13.3), ('Ogbonna', 13.2), ('Kiko Femenía', 13.1), ('Cathcart', 13.0), ('Kabasele', 12.6), ('Diop', 12.5), ('Aké', 12.4), ('Webster', 12.0)] |
 | Trossard      | BHA         | MID             |          14.9 | [('David Silva', 18.6), ('Sigurdsson', 17.9), ('Bowen', 16.0), ('Buendía', 15.8), ('Hughes', 15.1)]                                                                                                                                                                    |
 | Westwood      | BUR         | MID             |          13.6 | [('David Silva', 18.6), ('Sigurdsson', 17.9), ('Bowen', 16.0), ('Buendía', 15.8), ('Hughes', 15.1), ('Almirón', 14.9), ('Pereyra', 14.8), ('Shelvey', 14.4), ('Noble', 14.3)]                                                                                          |
+
 536 active players have been matched to 533 projections.
 
 ## Getting Started
