@@ -3,17 +3,18 @@ import pandas as pd
 import config
 from tabulate import tabulate
 import math
+import argparse
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
 # Import data from draft.premierleague.com and members.fantasyfootballscout.co.uk
-def import_data(myLeague):
+def import_data(myLeague, ffsusername, ffspassword):
     url = "https://draft.premierleague.com/api/league/" + str(myLeague) + "/element-status"
     r1 = requests.get(url=url)
     r2 = requests.get(url='https://draft.premierleague.com/api/bootstrap-static')
     s1 = requests.session()
     s1.post('https://members.fantasyfootballscout.co.uk/',
-            data={'username': config.login['username'], 'password': config.login['password'], 'login': '>+Log+In'})
+            data={'username': ffsusername, 'password': ffspassword, 'login': '>+Log+In'})
     r3 = s1.get('https://members.fantasyfootballscout.co.uk/projections/six-game-projections/')
     fplAvailabilityData = r1.json()
     fplPlayerData = r2.json()
@@ -160,12 +161,17 @@ def get_team(myLeague, myTeamName):
 
 
 def main():
-    # REPLACE with own values ##########################################################################################
-    myLeague = 48188
-    myTeamName = "wearetherunnersup"
-    ####################################################################################################################
-    myTeam = get_team(myLeague, myTeamName)
-    fplAvailabilityData, fplPlayerData, projectionsData = import_data(myLeague)
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-myLeague", "--myLeague", required=True, help="The minileague")
+    ap.add_argument("-myTeamName", "--myTeamName", required=True, help="The team")
+    ap.add_argument("-ffslogin", "--ffslogin", required=True, help="Username for fantasyfootballscout")
+    ap.add_argument("-ffspassword", "--ffspassword", required=True, help="Password for fantasyfootballscout")
+    args = vars(ap.parse_args())
+
+    myTeam = get_team(args.get('myLeague'), args.get('myTeamName'))
+    fplAvailabilityData, fplPlayerData, projectionsData = \
+        import_data(args.get('myLeague'), args.get('ffslogin'), args.get('ffspassword'))
     fplPlayerData = consolidate_data(fplAvailabilityData, fplPlayerData, myTeam)
     fplPlayerData = find_candidates(fplPlayerData, projectionsData)
     print_candidates(fplPlayerData, projectionsData)
