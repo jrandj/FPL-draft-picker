@@ -4,21 +4,39 @@ import config
 from tabulate import tabulate
 import math
 import argparse
+
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
 # Import data from draft.premierleague.com and members.fantasyfootballscout.co.uk
 def import_data(myLeague, ffsusername, ffspassword):
-    url = "https://draft.premierleague.com/api/league/" + str(myLeague) + "/element-status"
-    r1 = requests.get(url=url)
-    r2 = requests.get(url='https://draft.premierleague.com/api/bootstrap-static')
-    s1 = requests.session()
-    s1.post('https://members.fantasyfootballscout.co.uk/',
-            data={'username': ffsusername, 'password': ffspassword, 'login': '>+Log+In'})
-    r3 = s1.get('https://members.fantasyfootballscout.co.uk/projections/six-game-projections/')
+    try:
+        r1 = requests.get(url="https://draft.premierleague.com/api/league/" + str(myLeague) + "/element-status")
+        r1.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        raise SystemExit(err)
+    try:
+        r2 = requests.get(url='https://draft.premierleague.com/api/bootstrap-static')
+        r2.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        raise SystemExit(err)
+    try:
+        s1 = requests.session()
+        s1.post('https://members.fantasyfootballscout.co.uk/',
+                data={'username': ffsusername, 'password': ffspassword, 'login': '>+Log+In'})
+        r3 = s1.get('https://members.fantasyfootballscout.co.uk/projections/six-game-projections/')
+        r3.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        raise SystemExit(err)
+
     fplAvailabilityData = r1.json()
     fplPlayerData = r2.json()
-    projectionsData = pd.read_html(r3.content)
+    try:
+        projectionsData = pd.read_html(r3.content)
+    except ValueError as err:
+        print("No data can be read from fantasyfootballscout.")
+        raise SystemExit(err)
+
     return fplAvailabilityData, fplPlayerData, projectionsData
 
 
@@ -152,16 +170,24 @@ def print_candidates(fplPlayerData, projectionsData):
 # Get team ID
 def get_team(myLeague, myTeamName):
     url = "https://draft.premierleague.com/api/league/" + str(myLeague) + "/details"
-    r1 = requests.get(url=url)
+    try:
+        r1 = requests.get(url=url)
+        r1.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        raise SystemExit(err)
     leagueData = r1.json()
+    found = 0
     for i in leagueData['league_entries']:
         if i['entry_name'] == myTeamName:
             myTeam = i['entry_id']
+            found = 1
+    if found == 0:
+        print("Team " + myTeamName + " not found in league " + myLeague + ".")
+        raise SystemExit()
     return myTeam
 
 
 def main():
-
     ap = argparse.ArgumentParser()
     ap.add_argument("-myLeague", "--myLeague", required=True, help="The minileague")
     ap.add_argument("-myTeamName", "--myTeamName", required=True, help="The team")
