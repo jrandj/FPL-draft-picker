@@ -4,12 +4,29 @@ import config
 from tabulate import tabulate
 import math
 import argparse
-
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
-# Import data from draft.premierleague.com and members.fantasyfootballscout.co.uk
 def import_data(myLeague, ffsusername, ffspassword):
+    """Imports data from draft.premierleague and fantasyfootballscout.
+
+    Parameters
+    ----------
+    myLeague : sequence
+        The mini-league identifier.
+    ffsusername : sequence
+        The username used to authenticate to members.fantasyfootballscout.co.uk.
+    ffspassword : sequence
+        The password used to authenticate to members.fantasyfootballscout.co.uk.
+
+    Raises
+    ------
+    requests.exceptions.HTTPError:
+        If any HTTP errors are encountered when retrieving data.
+    ValueError:
+        If the six game projections cannot be parsed.
+
+    """
     try:
         r1 = requests.get(url="https://draft.premierleague.com/api/league/" + str(myLeague) + "/element-status")
         r1.raise_for_status()
@@ -34,21 +51,42 @@ def import_data(myLeague, ffsusername, ffspassword):
     try:
         projectionsData = pd.read_html(r3.content)
     except ValueError as err:
-        print("No data can be read from fantasyfootballscout.")
+        # Todo: Figure out how to catch authentication failure when posting to the session instead.
+        print("No data can be read from fantasyfootballscout, please check your credentials.")
         raise SystemExit(err)
 
     return fplAvailabilityData, fplPlayerData, projectionsData
 
 
-# Remove unicode characters so that names can be compared across fplPlayerData and projectionsData
-def strip_unicode(myString):
+def strip_special_characters(myString):
+    """Strips out special characters as these are not in the fantasyfootballscout.co.uk data.
+
+    Parameters
+    ----------
+    myString : sequence
+        The string to remove unicode characters from.
+
+    Raises
+    ------
+
+    """
     myString = myString.translate(str.maketrans({'í': 'i', 'ï': 'i', 'ß': 'ss', 'á': 'a', 'ä': 'a', 'é': 'e', 'ñ': 'n',
                                                  'ć': 'c', 'š': 's', 'Ö': 'o', 'ö': 'o', 'ó': 'o', 'ø': 'o', 'ü': 'u'}))
     return myString
 
 
-# Modify projectionsData so that the key matches 1-1 to fplPlayerData when we merge
-def clean_projections(projectionsData):
+def align_projections_data_to_official(projectionsData):
+    """Fix differences between fantasyfootballscout.co.uk projections and draft.premierleague.com data.
+
+    Parameters
+    ----------
+    projectionsData : dictionary
+        The projections JSON from fantasyfootballscout.co.uk to be modified.
+
+    Raises
+    ------
+
+    """
     projectionsData[0]['Team'].loc[projectionsData[0]['Team'] == 'BRI'] = 'BHA'
     projectionsData[0]['Team'].loc[projectionsData[0]['Team'] == 'SOT'] = 'SOU'
     projectionsData[0]['Team'].loc[projectionsData[0]['Team'] == 'WHM'] = 'WHU'
@@ -63,10 +101,22 @@ def clean_projections(projectionsData):
     return projectionsData
 
 
-# Find available players who have a better six game projection than my players
 def find_candidates(fplPlayerData, projectionsData):
+    """Find candidates who have a better six game projection than the players in the selected team.
+
+    Parameters
+    ----------
+    fplPlayerData : dictionary
+        The JSON containing player data from draft.premierleague.com
+    projectionsData : dictionary
+        The projections JSON from fantasyfootballscout.co.uk.
+
+    Raises
+    ------
+
+    """
     df = pd.DataFrame.from_dict(fplPlayerData['elements'])
-    projectionsData = clean_projections(projectionsData)
+    projectionsData = align_projections_data_to_official(projectionsData)
     sixGameProjection = projectionsData[0].columns.values[-2]
     nextGameWeek = projectionsData[0].columns.values[-8]
     nextGameWeekPlusOne = projectionsData[0].columns.values[-7]
@@ -98,10 +148,24 @@ def find_candidates(fplPlayerData, projectionsData):
     return fplPlayerData
 
 
-# Join data from fplAvailabilityData and myTeam into fplPlayerData
 def consolidate_data(fplAvailabilityData, fplPlayerData, myTeam):
+    """Augment fplPlayerData with information about availability from fplAvailabilityData.
+
+    Parameters
+    ----------
+    fplAvailabilityData : dictionary
+        The JSON containing data from the mini-league from draft.premierleague.com.
+    fplPlayerData : dictionary
+        The JSON containing player data from draft.premierleague.com
+    myTeam : sequence
+        The selected team identifier.
+
+    Raises
+    ------
+
+    """
     for i in range(len(fplPlayerData['elements'])):
-        fplPlayerData['elements'][i]['web_name_clean'] = strip_unicode(fplPlayerData['elements'][i]['web_name'])
+        fplPlayerData['elements'][i]['web_name_clean'] = strip_special_characters(fplPlayerData['elements'][i]['web_name'])
         fplPlayerData['elements'][i]['selected'] = 'No'
         fplPlayerData['elements'][i]['available'] = 'No'
 
@@ -122,8 +186,20 @@ def consolidate_data(fplAvailabilityData, fplPlayerData, myTeam):
     return fplPlayerData
 
 
-# Print available players with a higher projected score against my team and their projected score
 def print_candidates(fplPlayerData, projectionsData):
+    """Print the players in the selected team along with candidates with a better projection.
+
+    Parameters
+    ----------
+    fplPlayerData : dictionary
+        The JSON containing player data from draft.premierleague.com
+    projectionsData : dictionary
+        The projections JSON from fantasyfootballscout.co.uk.
+
+    Raises
+    ------
+
+    """
     myTeam = []
     printList = []
     nanCount = 0
@@ -158,17 +234,29 @@ def print_candidates(fplPlayerData, projectionsData):
                                                        x[nextGameWeekPlusThreeHeader], x[nextGameWeekPlusFourHeader],
                                                        x[nextGameWeekPlusFiveHeader], x['candidates']))
     print(tabulate(sortedPrintList, headers="keys", tablefmt="github"))
-    '''
-    Let's see how good our JOIN was (there are a small number of players that don't have projections for some reason)
-    Any differences here could be corrupted data (or special characters) in the members.fantasyfootballscout.co.uk  data
-    '''
+
+    # Print the number of matched players
     print(str(len(fplPlayerData['elements']) - inactiveCount) + " active players have been matched to "
           + str(len(fplPlayerData['elements']) - nanCount) + " projections.")
     return
 
 
-# Get team ID
 def get_team(myLeague, myTeamName):
+    """Gets the unique identifier for the team from the team name.
+
+    Parameters
+    ----------
+    myLeague : sequence
+        The mini-league identifier.
+    myTeamName : sequence
+        The team name.
+
+    Raises
+    ------
+    requests.exceptions.HTTPError:
+        If any HTTP errors are encountered when retrieving data.
+
+    """
     url = "https://draft.premierleague.com/api/league/" + str(myLeague) + "/details"
     try:
         r1 = requests.get(url=url)
@@ -189,10 +277,10 @@ def get_team(myLeague, myTeamName):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("-myLeague", "--myLeague", required=True, help="The minileague")
-    ap.add_argument("-myTeamName", "--myTeamName", required=True, help="The team")
-    ap.add_argument("-ffslogin", "--ffslogin", required=True, help="Username for fantasyfootballscout")
-    ap.add_argument("-ffspassword", "--ffspassword", required=True, help="Password for fantasyfootballscout")
+    ap.add_argument("-myLeague", required=True, help="The minileague")
+    ap.add_argument("-myTeamName",  required=True, help="The team")
+    ap.add_argument("-ffslogin", required=True, help="Username for fantasyfootballscout")
+    ap.add_argument("-ffspassword", required=True, help="Password for fantasyfootballscout")
     args = vars(ap.parse_args())
 
     myTeam = get_team(args.get('myLeague'), args.get('myTeamName'))
