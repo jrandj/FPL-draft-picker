@@ -1,9 +1,9 @@
 import requests
 import pandas as pd
-import config
 from tabulate import tabulate
 import math
 import argparse
+
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
@@ -126,7 +126,7 @@ def find_candidates(fplPlayerData, projectionsData):
     nextGameWeekPlusFive = projectionsData[0].columns.values[-3]
     # Left join fplPlayerData onto projections using a key of player name, team name and position name
     df1 = df.merge(projectionsData[0], how='left', left_on=['web_name_clean', 'team_name', 'position_name'],
-                   right_on=['Name', 'Team', 'Pos'])
+                   right_on=['Name', 'Team', 'Pos'], indicator='merge_status')
     d1 = df1.to_dict(orient='records')
 
     for i in range(len(d1)):
@@ -138,6 +138,7 @@ def find_candidates(fplPlayerData, projectionsData):
         fplPlayerData['elements'][i][nextGameWeekPlusThree] = d1[i][nextGameWeekPlusThree]
         fplPlayerData['elements'][i][nextGameWeekPlusFour] = d1[i][nextGameWeekPlusFour]
         fplPlayerData['elements'][i][nextGameWeekPlusFive] = d1[i][nextGameWeekPlusFive]
+        fplPlayerData['elements'][i]['merge_status'] = d1[i]['merge_status']
         if d1[i]['selected'] == 'Yes':
             for j in range(len(d1)):
                 if (d1[j][sixGameProjection] > d1[i][sixGameProjection]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
@@ -165,7 +166,8 @@ def consolidate_data(fplAvailabilityData, fplPlayerData, myTeam):
 
     """
     for i in range(len(fplPlayerData['elements'])):
-        fplPlayerData['elements'][i]['web_name_clean'] = strip_special_characters(fplPlayerData['elements'][i]['web_name'])
+        fplPlayerData['elements'][i]['web_name_clean'] = strip_special_characters(
+            fplPlayerData['elements'][i]['web_name'])
         fplPlayerData['elements'][i]['selected'] = 'No'
         fplPlayerData['elements'][i]['available'] = 'No'
 
@@ -236,8 +238,16 @@ def print_candidates(fplPlayerData, projectionsData):
     print(tabulate(sortedPrintList, headers="keys", tablefmt="github"))
 
     # Print the number of matched players
-    print(str(len(fplPlayerData['elements']) - inactiveCount) + " active players have been matched to "
-          + str(len(fplPlayerData['elements']) - nanCount) + " projections.")
+    print(str(len(fplPlayerData['elements']) - inactiveCount)
+          + " active players from the official API have been matched to "
+          + str(len(fplPlayerData['elements']) - nanCount) + " Scout projections, with a difference of "
+          + str(len(fplPlayerData['elements']) - inactiveCount - (len(fplPlayerData['elements']) - nanCount)) + ".")
+
+    failed_merge = [i for i in fplPlayerData['elements'] if i['merge_status'] != 'both' and i['status'] != 'u']
+    failed_merge_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status"]]
+                                for i in failed_merge]
+    print("The " + str(len(fplPlayerData['elements']) - inactiveCount - (len(fplPlayerData['elements']) - nanCount))
+          + " differences are due to the following merge failures: " + str(failed_merge_player_info))
     return
 
 
@@ -278,7 +288,7 @@ def get_team(myLeague, myTeamName):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("-myLeague", required=True, help="The minileague")
-    ap.add_argument("-myTeamName",  required=True, help="The team")
+    ap.add_argument("-myTeamName", required=True, help="The team")
     ap.add_argument("-ffslogin", required=True, help="Username for fantasyfootballscout")
     ap.add_argument("-ffspassword", required=True, help="Password for fantasyfootballscout")
     args = vars(ap.parse_args())
