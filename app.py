@@ -189,6 +189,62 @@ def consolidate_data(fplAvailabilityData, fplPlayerData, myTeam):
     return fplPlayerData
 
 
+def get_formations(myTeam, nextGameWeekHeader):
+    """Print team formations in order of highest scoring.
+
+    Parameters
+    ----------
+    myTeam : dictionary
+        The JSON containing player data from the team
+    nextGameWeekHeader : dictionary
+        The key for the projected points of the next game week
+
+    Raises
+    ------
+
+    """
+    formations = [{'GKP': 1, 'DEF': 5, 'MID': 3, 'FWD': 2, 'Score': 0},
+                  {'GKP': 1, 'DEF': 5, 'MID': 4, 'FWD': 1, 'Score': 0},
+                  {'GKP': 1, 'DEF': 4, 'MID': 3, 'FWD': 3, 'Score': 0},
+                  {'GKP': 1, 'DEF': 4, 'MID': 5, 'FWD': 1, 'Score': 0},
+                  {'GKP': 1, 'DEF': 3, 'MID': 5, 'FWD': 2, 'Score': 0}]
+    player_index = 0
+    total_points = 0
+    formation = {'GKP': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
+
+    for i in formations:
+        myTeamCopy = myTeam.copy()
+        while formation != i and len(myTeamCopy) > player_index:
+            current_player = myTeamCopy[player_index]
+            if current_player['position_name'] == 'GKP' and formation.get('GKP') + 1 <= i.get('GKP'):
+                formation['GKP'] = formation['GKP'] + 1
+                total_points += current_player[nextGameWeekHeader]
+                del myTeamCopy[player_index]
+                player_index = 0
+            elif current_player['position_name'] == 'DEF' and formation.get('DEF') + 1 <= i.get('DEF'):
+                formation['DEF'] = formation['DEF'] + 1
+                total_points += current_player[nextGameWeekHeader]
+                del myTeamCopy[player_index]
+                player_index = 0
+            elif current_player['position_name'] == 'MID' and formation.get('MID') + 1 <= i.get('MID'):
+                formation['MID'] = formation['MID'] + 1
+                total_points += current_player[nextGameWeekHeader]
+                del myTeamCopy[player_index]
+                player_index = 0
+            elif current_player['position_name'] == 'FWD' and formation.get('FWD') + 1 <= i.get('FWD'):
+                formation['FWD'] = formation['FWD'] + 1
+                total_points += current_player[nextGameWeekHeader]
+                del myTeamCopy[player_index]
+                player_index = 0
+            player_index = player_index + 1
+
+        i['Score'] = total_points
+        total_points = 0
+        player_index = 0
+        formation = {'GKP': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
+    return formations
+
+
 def print_candidates(fplPlayerData, projectionsData):
     """Print the players in the selected team along with candidates with a better projection.
 
@@ -231,12 +287,10 @@ def print_candidates(fplPlayerData, projectionsData):
                                                          nextGameWeekPlusFiveHeader, 'candidates'}}
         printList.append(printDict)
 
-    sortedPrintList = sorted(printList, key=lambda x: (x['web_name'], x['team_name'], x['position_name'],
-                                                       x[sixGameProjectionHeader], x[nextGameWeekHeader],
-                                                       x[nextGameWeekPlusOneHeader], x[nextGameWeekPlusTwoHeader],
-                                                       x[nextGameWeekPlusThreeHeader], x[nextGameWeekPlusFourHeader],
-                                                       x[nextGameWeekPlusFiveHeader], x['candidates']))
+    sortedPrintList = sorted(printList, key=lambda x: (x['position_name'], -x[sixGameProjectionHeader]))
     print(tabulate(sortedPrintList, headers="keys", tablefmt="github"))
+
+    formations = get_formations(myTeam, nextGameWeekHeader)
 
     # Print the number of matched players
     print(str(len(fplPlayerData['elements']) - inactiveCount)
@@ -249,7 +303,7 @@ def print_candidates(fplPlayerData, projectionsData):
                                 for i in failed_merge]
     print("The " + str(len(fplPlayerData['elements']) - inactiveCount - (len(fplPlayerData['elements']) - nanCount))
           + " differences are due to the following merge failures: " + str(failed_merge_player_info))
-    return
+    print("Formations and their scores: " + str(sorted(formations, key=lambda x: (x['Score']), reverse=True)))
 
 
 def get_team(myLeague, myTeamName):
