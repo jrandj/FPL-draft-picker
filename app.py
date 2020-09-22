@@ -239,7 +239,8 @@ def get_formations(team, nextGameWeekHeader):
                   {'GKP': 1, 'DEF': 5, 'MID': 4, 'FWD': 1, 'Score': 0},
                   {'GKP': 1, 'DEF': 4, 'MID': 3, 'FWD': 3, 'Score': 0},
                   {'GKP': 1, 'DEF': 4, 'MID': 5, 'FWD': 1, 'Score': 0},
-                  {'GKP': 1, 'DEF': 3, 'MID': 5, 'FWD': 2, 'Score': 0}]
+                  {'GKP': 1, 'DEF': 3, 'MID': 5, 'FWD': 2, 'Score': 0},
+                  {'GKP': 1, 'DEF': 3, 'MID': 4, 'FWD': 3, 'Score': 0}]
     player_index = 0
     total_points = 0
     current_formation = {'GKP': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
