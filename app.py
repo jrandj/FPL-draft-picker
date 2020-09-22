@@ -189,14 +189,46 @@ def consolidate_data(fplAvailabilityData, fplPlayerData, myTeam):
     return fplPlayerData
 
 
-def get_formations(myTeam, nextGameWeekHeader):
+def add_player_to_formation(current_player, current_formation, formation):
+    """Attempt to add a player to a formation.
+
+    Parameters
+    ----------
+    current_player : dictionary
+        The proposed player
+    current_formation : dictionary
+        The current formation
+    formation : dictionary
+        The formation that we are working towards
+
+    Raises
+    ------
+
+    """
+    player_added = True
+
+    if current_player['position_name'] == 'GKP' and current_formation.get('GKP') + 1 <= formation.get('GKP'):
+        current_formation['GKP'] = current_formation['GKP'] + 1
+    elif current_player['position_name'] == 'DEF' and current_formation.get('DEF') + 1 <= formation.get('DEF'):
+        current_formation['DEF'] = current_formation['DEF'] + 1
+    elif current_player['position_name'] == 'MID' and current_formation.get('MID') + 1 <= formation.get('MID'):
+        current_formation['MID'] = current_formation['MID'] + 1
+    elif current_player['position_name'] == 'FWD' and current_formation.get('FWD') + 1 <= formation.get('FWD'):
+        current_formation['FWD'] = current_formation['FWD'] + 1
+    else:
+        player_added = False
+
+    return player_added
+
+
+def get_formations(team, nextGameWeekHeader):
     """Print team formations in order of highest scoring.
 
     Parameters
     ----------
-    myTeam : dictionary
-        The JSON containing player data from the team
-    nextGameWeekHeader : dictionary
+    team : dictionary
+        The JSON containing player data from a team
+    nextGameWeekHeader : string
         The key for the projected points of the next game week
 
     Raises
@@ -210,38 +242,25 @@ def get_formations(myTeam, nextGameWeekHeader):
                   {'GKP': 1, 'DEF': 3, 'MID': 5, 'FWD': 2, 'Score': 0}]
     player_index = 0
     total_points = 0
-    formation = {'GKP': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
+    current_formation = {'GKP': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
+    team.sort(key=lambda x: (x['position_name'], -x[nextGameWeekHeader]))
+    for formation in formations:
+        team_copy = team.copy()
+        while current_formation != formation and len(team_copy) > player_index:
+            current_player = team_copy[player_index]
+            # This approach assumes the team is sorted by projected points in the next game week
+            if add_player_to_formation(current_player, current_formation, formation):
+                total_points += current_player[nextGameWeekHeader]
+                del team_copy[player_index]
+                player_index = 0
+            else:
+                player_index = player_index + 1
 
-    for i in formations:
-        myTeamCopy = myTeam.copy()
-        while formation != i and len(myTeamCopy) > player_index:
-            current_player = myTeamCopy[player_index]
-            if current_player['position_name'] == 'GKP' and formation.get('GKP') + 1 <= i.get('GKP'):
-                formation['GKP'] = formation['GKP'] + 1
-                total_points += current_player[nextGameWeekHeader]
-                del myTeamCopy[player_index]
-                player_index = 0
-            elif current_player['position_name'] == 'DEF' and formation.get('DEF') + 1 <= i.get('DEF'):
-                formation['DEF'] = formation['DEF'] + 1
-                total_points += current_player[nextGameWeekHeader]
-                del myTeamCopy[player_index]
-                player_index = 0
-            elif current_player['position_name'] == 'MID' and formation.get('MID') + 1 <= i.get('MID'):
-                formation['MID'] = formation['MID'] + 1
-                total_points += current_player[nextGameWeekHeader]
-                del myTeamCopy[player_index]
-                player_index = 0
-            elif current_player['position_name'] == 'FWD' and formation.get('FWD') + 1 <= i.get('FWD'):
-                formation['FWD'] = formation['FWD'] + 1
-                total_points += current_player[nextGameWeekHeader]
-                del myTeamCopy[player_index]
-                player_index = 0
-            player_index = player_index + 1
-
-        i['Score'] = total_points
+        formation['Score'] = round(total_points, 2)
         total_points = 0
         player_index = 0
-        formation = {'GKP': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
+        current_formation = {'GKP': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
+    formations.sort(key=lambda x: (-x['Score']))
     return formations
 
 
