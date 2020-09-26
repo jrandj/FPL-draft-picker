@@ -12,11 +12,11 @@ def import_data(myLeague, ffsusername, ffspassword):
 
     Parameters
     ----------
-    myLeague : sequence
+    myLeague : str
         The mini-league identifier.
-    ffsusername : sequence
+    ffsusername : str
         The username used to authenticate to members.fantasyfootballscout.co.uk.
-    ffspassword : sequence
+    ffspassword : str
         The password used to authenticate to members.fantasyfootballscout.co.uk.
 
     Raises
@@ -58,22 +58,22 @@ def import_data(myLeague, ffsusername, ffspassword):
     return fplAvailabilityData, fplPlayerData, projectionsData
 
 
-def strip_special_characters(myString):
-    """Strips out special characters as these are not in the fantasyfootballscout.co.uk data.
+def strip_special_characters(name):
+    """Strips out special characters from names as these are not in the fantasyfootballscout.co.uk data.
 
     Parameters
     ----------
-    myString : sequence
-        The string to remove unicode characters from.
+    name : str
+        The name to remove unicode characters from.
 
     Raises
     ------
 
     """
-    myString = myString.translate(str.maketrans({'í': 'i', 'ï': 'i', 'ß': 'ss', 'á': 'a', 'ä': 'a', 'é': 'e', 'ñ': 'n',
-                                                 'ć': 'c', 'š': 's', 'Ö': 'o', 'ö': 'o', 'ó': 'o', 'ø': 'o', 'ü': 'u',
-                                                 'ç': 'c'}))
-    return myString
+    name = name.translate(str.maketrans({'í': 'i', 'ï': 'i', 'ß': 'ss', 'á': 'a', 'ä': 'a', 'é': 'e', 'ñ': 'n',
+                                         'ć': 'c', 'š': 's', 'Ö': 'O', 'ö': 'o', 'ó': 'o', 'ø': 'o', 'ü': 'u',
+                                         'ç': 'c', 'ú': 'u', 'Ü': 'U'}))
+    return name
 
 
 def align_projections_data_to_official(projectionsData):
@@ -350,9 +350,9 @@ def get_team(myLeague, myTeamName):
 
     Parameters
     ----------
-    myLeague : sequence
+    myLeague : str
         The mini-league identifier.
-    myTeamName : sequence
+    myTeamName : str
         The team name.
 
     Raises
@@ -384,7 +384,7 @@ def get_league_details(league):
 
     Parameters
     ----------
-    league : sequence
+    league : str
         The mini-league identifier.
 
     Raises
