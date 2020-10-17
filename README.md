@@ -43,7 +43,7 @@ Run the script from the command line:
 app.py -myLeague <value> -myTeamName <value> -ffslogin <value> -ffspassword <value>
 ```
 Values for the parameters can be found as per the below:
-myLeague - This can be found by inspecting the HTTP calls to `/api/league/` from draft.premierleague.com.
-myTeamName - The name of the team as shown at draft.premierleague.com.
-ffslogin - Fantasy football scout login.
-ffspassword - Fantasy football scout password.
+* myLeague - This can be found by inspecting the HTTP calls to `/api/league/` from draft.premierleague.com.
+* myTeamName - The name of the team as shown at draft.premierleague.com.
+* ffslogin - Fantasy football scout login.
+* ffspassword - Fantasy football scout password.
