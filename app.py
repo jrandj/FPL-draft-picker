@@ -306,8 +306,10 @@ def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCou
         The projections JSON from fantasyfootballscout.co.uk.
     team : dict
         The team that candidates are printed for
-    nanCount :
-    inactiveCount :
+    nanCount : int
+        The number of players that have a NaN fantasyfootballscout.co.uk projection.
+    inactiveCount : int
+        The number of inactive players.
 
     Raises
     ------
@@ -333,15 +335,18 @@ def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCou
     sortedPrintList = sorted(printList, key=lambda x: (x['position_name'], -x[sixGameProjectionHeader]))
     print(tabulate(sortedPrintList, headers="keys", tablefmt="github"))
     print(str(len(fplPlayerData['elements']) - inactiveCount)
-          + " active players from the official API have been matched to "
-          + str(len(fplPlayerData['elements']) - nanCount) + " Scout projections, with a difference of "
-          + str(len(fplPlayerData['elements']) - inactiveCount - (len(fplPlayerData['elements']) - nanCount)) + ".")
-
+          + " active players from the official API have been matched to " + str(len(fplPlayerData['elements'])
+            - inactiveCount + (inactiveCount - nanCount)) + " valid Scout projections.")
     failed_merge = [i for i in fplPlayerData['elements'] if i['merge_status'] != 'both' and i['status'] != 'u']
+    no_projections = [i for i in fplPlayerData['elements'] if math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u']
     failed_merge_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status"]]
                                 for i in failed_merge]
-    print("The " + str(len(fplPlayerData['elements']) - inactiveCount - (len(fplPlayerData['elements']) - nanCount))
-          + " differences are due to the following merge failures: " + str(failed_merge_player_info))
+    no_projections_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status"]]
+                                for i in no_projections]
+    print("The following merge failures occurred between the official API and the Scout projections: "
+          + str(failed_merge_player_info))
+    print("The following players were matched but have an invalid Scout projection: "
+          + str(no_projections_player_info))
     return
 
 
@@ -469,8 +474,6 @@ def predict_fixtures(fplPlayerData, projectionsData, league_details):
     for match in league_details['matches']:
         # assuming league size is 12
         if game_count < 6 and match['finished'] == False:
-            # if(id_to_entry_name(match['league_entry_2'], league_details)) == 'Grizzly Bears':
-            #     print("here")
             player_one_players, nanCount, inactiveCount = get_players_for_team(fplPlayerData, projectionsData,
                                                                                id_to_entry_id(match['league_entry_1'],
                                                                                               league_details))
