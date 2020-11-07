@@ -134,6 +134,7 @@ def find_candidates(fplPlayerData, projectionsData, team):
 
     for i in range(len(d1)):
         candidates = {}
+        candidates_this_gw = {}
         fplPlayerData['elements'][i][sixGameProjection] = d1[i][sixGameProjection]
         fplPlayerData['elements'][i][nextGameWeek] = d1[i][nextGameWeek]
         fplPlayerData['elements'][i][nextGameWeekPlusOne] = d1[i][nextGameWeekPlusOne]
@@ -147,8 +148,13 @@ def find_candidates(fplPlayerData, projectionsData, team):
                 if (d1[j][sixGameProjection] > d1[i][sixGameProjection]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
                         (d1[j]['selected'] == 'No') and (d1[j]['available'] == 'Yes'):
                     candidates[d1[j]['web_name']] = d1[j][sixGameProjection]
+                if (d1[j][nextGameWeek] > d1[i][nextGameWeek]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
+                        (d1[j]['selected'] == 'No') and (d1[j]['available'] == 'Yes'):
+                    candidates_this_gw[d1[j]['web_name']] = d1[j][nextGameWeek]
             sorted_candidates = sorted(candidates.items(), key=lambda x: x[1], reverse=True)
+            sorted_candidates_this_gw = sorted(candidates_this_gw.items(), key=lambda x: x[1], reverse=True)
             fplPlayerData['elements'][i]['candidates'] = sorted_candidates
+            fplPlayerData['elements'][i]['candidates_this_gw'] = sorted_candidates_this_gw
     return fplPlayerData
 
 
@@ -239,6 +245,7 @@ def get_formations(team, nextGameWeekHeader):
                   {'GKP': 1, 'DEF': 5, 'MID': 4, 'FWD': 1, 'Score': 0},
                   {'GKP': 1, 'DEF': 4, 'MID': 3, 'FWD': 3, 'Score': 0},
                   {'GKP': 1, 'DEF': 4, 'MID': 5, 'FWD': 1, 'Score': 0},
+                  {'GKP': 1, 'DEF': 4, 'MID': 4, 'FWD': 2, 'Score': 0},
                   {'GKP': 1, 'DEF': 3, 'MID': 5, 'FWD': 2, 'Score': 0},
                   {'GKP': 1, 'DEF': 3, 'MID': 4, 'FWD': 3, 'Score': 0}]
     player_index = 0
@@ -329,7 +336,7 @@ def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCou
                                                          sixGameProjectionHeader, nextGameWeekHeader,
                                                          nextGameWeekPlusOneHeader, nextGameWeekPlusTwoHeader,
                                                          nextGameWeekPlusThreeHeader, nextGameWeekPlusFourHeader,
-                                                         nextGameWeekPlusFiveHeader, 'candidates'}}
+                                                         nextGameWeekPlusFiveHeader, 'candidates', 'candidates_this_gw'}}
         printList.append(printDict)
 
     sortedPrintList = sorted(printList, key=lambda x: (x['position_name'], -x[sixGameProjectionHeader]))
