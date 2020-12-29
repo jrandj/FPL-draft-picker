@@ -2,7 +2,7 @@
 
 FPL-draft-picker is a Python application for finding available players in the selected league that have a higher 
 projected score than players already in the selected team. This application uses APIs available from 
-draft.premierleague.com to obtain player data and then matches against the projections from fantasyfootballscout.co.uk.
+`draft.premierleague.com` to obtain player data and then matches against the projections from `fantasyfootballscout.co.uk`.
 
 ## Output
 
@@ -43,7 +43,7 @@ Run the script from the command line:
 app.py -myLeague <value> -myTeamName <value> -ffslogin <value> -ffspassword <value>
 ```
 Values for the parameters can be found as per the below:
-* myLeague - This can be found by inspecting the HTTP calls to `/api/league/` from draft.premierleague.com.
-* myTeamName - The name of the team as shown at draft.premierleague.com.
+* myLeague - This can be found by inspecting the HTTP GET request to the details endpoint (e.g. `draft.premierleague.com/api/league/<value>/details`) from the League tab in your browsers developer console.
+* myTeamName - The name of the team as shown at `draft.premierleague.com`.
 * ffslogin - Fantasy football scout login.
 * ffspassword - Fantasy football scout password.
