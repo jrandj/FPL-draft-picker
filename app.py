@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import requests
 import pandas as pd
 from tabulate import tabulate
@@ -333,22 +335,14 @@ def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCou
     printListIctIndex = []
     sixGameProjectionHeader = projectionsData[0].columns.values[-2]
     nextGameWeekHeader = projectionsData[0].columns.values[-8]
-    nextGameWeekPlusOneHeader = projectionsData[0].columns.values[-7]
-    nextGameWeekPlusTwoHeader = projectionsData[0].columns.values[-6]
-    nextGameWeekPlusThreeHeader = projectionsData[0].columns.values[-5]
-    nextGameWeekPlusFourHeader = projectionsData[0].columns.values[-4]
-    nextGameWeekPlusFiveHeader = projectionsData[0].columns.values[-3]
 
     for i in team:
-        printDictPoints = {k: v for k, v in i.items() if k in {'web_name', 'team_name', 'position_name',
-                                                               sixGameProjectionHeader, nextGameWeekHeader,
-                                                               nextGameWeekPlusOneHeader, nextGameWeekPlusTwoHeader,
-                                                               nextGameWeekPlusThreeHeader, nextGameWeekPlusFourHeader,
-                                                               nextGameWeekPlusFiveHeader, 'candidates',
-                                                               'candidates_this_gw'}}
+        printDictPoints = OrderedDict((k, i[k]) for k in (
+        'web_name', 'team_name', 'position_name', sixGameProjectionHeader, nextGameWeekHeader, 'candidates',
+        'candidates_this_gw'))
         printListPoints.append(printDictPoints)
-        printDictIctIndex = {k: v for k, v in i.items() if k in {'web_name', 'team_name', 'position_name',
-                                                                 'ict_index', 'ict_index_candidates'}}
+        printDictIctIndex = OrderedDict(
+            (k, i[k]) for k in ('web_name', 'team_name', 'position_name', 'ict_index', 'ict_index_candidates'))
         printListIctIndex.append(printDictIctIndex)
 
     sortedPrintListPoints = sorted(printListPoints, key=lambda x: (x['position_name'], -x[sixGameProjectionHeader]))
@@ -359,7 +353,7 @@ def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCou
     print(str(len(fplPlayerData['elements']) - inactiveCount)
           + " active players from the official API have been matched to " + str(len(fplPlayerData['elements'])
                                                                                 - inactiveCount + (
-                                                                                            inactiveCount - nanCount)) + " valid Scout projections.")
+                                                                                        inactiveCount - nanCount)) + " valid Scout projections.")
     failed_merge = [i for i in fplPlayerData['elements'] if i['merge_status'] != 'both' and i['status'] != 'u']
     no_projections = [i for i in fplPlayerData['elements'] if
                       math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u']
