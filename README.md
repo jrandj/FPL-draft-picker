@@ -6,8 +6,11 @@ draft.premierleague.com to obtain player data and then matches against the proje
 
 ## Output
 
-**Team Suggestions**
+**Team Suggestions - Projected Points**
 ![figure2](res/player_suggestions.JPG)
+
+**Team Suggestions - ICT Index**
+![figure2](res/ict_suggestions.JPG)
 
 **Formation Suggestions**
 ![figure3](res/formation_suggestions.JPG)

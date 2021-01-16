@@ -135,6 +135,7 @@ def find_candidates(fplPlayerData, projectionsData, team):
     for i in range(len(d1)):
         candidates = {}
         candidates_this_gw = {}
+        ict_index_candidates = {}
         fplPlayerData['elements'][i][sixGameProjection] = d1[i][sixGameProjection]
         fplPlayerData['elements'][i][nextGameWeek] = d1[i][nextGameWeek]
         fplPlayerData['elements'][i][nextGameWeekPlusOne] = d1[i][nextGameWeekPlusOne]
@@ -151,10 +152,15 @@ def find_candidates(fplPlayerData, projectionsData, team):
                 if (d1[j][nextGameWeek] > d1[i][nextGameWeek]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
                         (d1[j]['selected'] == 'No') and (d1[j]['available'] == 'Yes'):
                     candidates_this_gw[d1[j]['web_name']] = d1[j][nextGameWeek]
+                if (float(d1[j]['ict_index']) > float(d1[i]['ict_index'])) and (d1[i]['Pos'] == d1[j]['Pos']) and \
+                        (d1[j]['selected'] == 'No') and (d1[j]['available'] == 'Yes'):
+                    ict_index_candidates[d1[j]['web_name']] = float(d1[j]['ict_index'])
             sorted_candidates = sorted(candidates.items(), key=lambda x: x[1], reverse=True)
             sorted_candidates_this_gw = sorted(candidates_this_gw.items(), key=lambda x: x[1], reverse=True)
+            ict_index_candidates = sorted(ict_index_candidates.items(), key=lambda x: x[1], reverse=True)
             fplPlayerData['elements'][i]['candidates'] = sorted_candidates
             fplPlayerData['elements'][i]['candidates_this_gw'] = sorted_candidates_this_gw
+            fplPlayerData['elements'][i]['ict_index_candidates'] = ict_index_candidates
     return fplPlayerData
 
 
@@ -243,6 +249,7 @@ def get_formations(team, nextGameWeekHeader):
     """
     formations = [{'GKP': 1, 'DEF': 5, 'MID': 3, 'FWD': 2, 'Score': 0},
                   {'GKP': 1, 'DEF': 5, 'MID': 4, 'FWD': 1, 'Score': 0},
+                  {'GKP': 1, 'DEF': 5, 'MID': 2, 'FWD': 3, 'Score': 0},
                   {'GKP': 1, 'DEF': 4, 'MID': 3, 'FWD': 3, 'Score': 0},
                   {'GKP': 1, 'DEF': 4, 'MID': 5, 'FWD': 1, 'Score': 0},
                   {'GKP': 1, 'DEF': 4, 'MID': 4, 'FWD': 2, 'Score': 0},
@@ -322,7 +329,8 @@ def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCou
     ------
 
     """
-    printList = []
+    printListPoints = []
+    printListIctIndex = []
     sixGameProjectionHeader = projectionsData[0].columns.values[-2]
     nextGameWeekHeader = projectionsData[0].columns.values[-8]
     nextGameWeekPlusOneHeader = projectionsData[0].columns.values[-7]
@@ -332,24 +340,33 @@ def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCou
     nextGameWeekPlusFiveHeader = projectionsData[0].columns.values[-3]
 
     for i in team:
-        printDict = {k: v for k, v in i.items() if k in {'web_name', 'team_name', 'position_name',
-                                                         sixGameProjectionHeader, nextGameWeekHeader,
-                                                         nextGameWeekPlusOneHeader, nextGameWeekPlusTwoHeader,
-                                                         nextGameWeekPlusThreeHeader, nextGameWeekPlusFourHeader,
-                                                         nextGameWeekPlusFiveHeader, 'candidates', 'candidates_this_gw'}}
-        printList.append(printDict)
+        printDictPoints = {k: v for k, v in i.items() if k in {'web_name', 'team_name', 'position_name',
+                                                               sixGameProjectionHeader, nextGameWeekHeader,
+                                                               nextGameWeekPlusOneHeader, nextGameWeekPlusTwoHeader,
+                                                               nextGameWeekPlusThreeHeader, nextGameWeekPlusFourHeader,
+                                                               nextGameWeekPlusFiveHeader, 'candidates',
+                                                               'candidates_this_gw'}}
+        printListPoints.append(printDictPoints)
+        printDictIctIndex = {k: v for k, v in i.items() if k in {'web_name', 'team_name', 'position_name',
+                                                                 'ict_index', 'ict_index_candidates'}}
+        printListIctIndex.append(printDictIctIndex)
 
-    sortedPrintList = sorted(printList, key=lambda x: (x['position_name'], -x[sixGameProjectionHeader]))
-    print(tabulate(sortedPrintList, headers="keys", tablefmt="github"))
+    sortedPrintListPoints = sorted(printListPoints, key=lambda x: (x['position_name'], -x[sixGameProjectionHeader]))
+    sortedPrintListIctIndex = sorted(printListIctIndex, key=lambda x: (x['position_name'], -float(x['ict_index'])))
+    print(tabulate(sortedPrintListPoints, headers="keys", tablefmt="github"))
+    print(tabulate(sortedPrintListIctIndex, headers="keys", tablefmt="github"))
+
     print(str(len(fplPlayerData['elements']) - inactiveCount)
           + " active players from the official API have been matched to " + str(len(fplPlayerData['elements'])
-            - inactiveCount + (inactiveCount - nanCount)) + " valid Scout projections.")
+                                                                                - inactiveCount + (
+                                                                                            inactiveCount - nanCount)) + " valid Scout projections.")
     failed_merge = [i for i in fplPlayerData['elements'] if i['merge_status'] != 'both' and i['status'] != 'u']
-    no_projections = [i for i in fplPlayerData['elements'] if math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u']
+    no_projections = [i for i in fplPlayerData['elements'] if
+                      math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u']
     failed_merge_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status"]]
                                 for i in failed_merge]
     no_projections_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status"]]
-                                for i in no_projections]
+                                  for i in no_projections]
     print("The following merge failures occurred between the official API and the Scout projections: "
           + str(failed_merge_player_info))
     print("The following players were matched but have an invalid Scout projection: "
