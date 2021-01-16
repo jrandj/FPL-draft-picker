@@ -30,19 +30,18 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install FPL-dra
     ```bash
     py -m venv venv
     ```
+
 2. Activate virtual environment:
     ```bash
     "venv/Scripts/activate.bat"
     ```
+
 3. Install dependencies:
     ```bash
     pip3 install -r requirements.txt
     ```
 
-To check for outdated packages:
-    ```bash
-    pip3 list --outdated
-    ```
+To check for outdated packages run `pip3 list --outdated`.
    
 ### Usage
 Run the script from the command line:
