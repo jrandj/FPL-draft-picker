@@ -74,7 +74,7 @@ def strip_special_characters(name):
     """
     name = name.translate(str.maketrans({'í': 'i', 'ï': 'i', 'ß': 'ss', 'á': 'a', 'ä': 'a', 'é': 'e', 'ñ': 'n',
                                          'ć': 'c', 'š': 's', 'Ö': 'O', 'ö': 'o', 'ó': 'o', 'ø': 'o', 'ü': 'u',
-                                         'ç': 'c', 'ú': 'u', 'Ü': 'U'}))
+                                         'ç': 'c', 'ú': 'u', 'Ü': 'U', 'ş': 's', 'ğ': 'g', 'ã': 'a'}))
     return name
 
 
@@ -101,6 +101,12 @@ def align_projections_data_to_official(projectionsData):
                                    projectionsData[0]['Team'].str.contains('EVE')] = 'Andre Gomes'
     projectionsData[0]['Name'].loc[projectionsData[0]['Name'].str.contains('Sanchez') &
                                    projectionsData[0]['Team'].str.contains('WHU')] = 'Carlos Sanchez'
+    projectionsData[0]['Name'].loc[projectionsData[0]['Name'].str.contains('Rodriguez') &
+                                   projectionsData[0]['Team'].str.contains('EVE')] = 'James'
+    projectionsData[0]['Name'].loc[projectionsData[0]['Name'].str.contains('Rodri') &
+                                   projectionsData[0]['Team'].str.contains('MCI')] = 'Rodrigo'
+    projectionsData[0]['Name'].loc[projectionsData[0]['Name'].str.contains('Kiko Femenia') &
+                                   projectionsData[0]['Team'].str.contains('WAT')] = 'Femenia'
     return projectionsData
 
 
@@ -338,8 +344,8 @@ def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCou
 
     for i in team:
         printDictPoints = OrderedDict((k, i[k]) for k in (
-        'web_name', 'team_name', 'position_name', sixGameProjectionHeader, nextGameWeekHeader, 'candidates',
-        'candidates_this_gw'))
+            'web_name', 'team_name', 'position_name', sixGameProjectionHeader, nextGameWeekHeader, 'candidates',
+            'candidates_this_gw'))
         printListPoints.append(printDictPoints)
         printDictIctIndex = OrderedDict(
             (k, i[k]) for k in ('web_name', 'team_name', 'position_name', 'ict_index', 'ict_index_candidates'))
