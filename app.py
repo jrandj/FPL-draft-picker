@@ -135,9 +135,12 @@ def find_candidates(fplPlayerData, projectionsData, team):
     nextGameWeekPlusThree = projectionsData[0].columns.values[-5]
     nextGameWeekPlusFour = projectionsData[0].columns.values[-4]
     nextGameWeekPlusFive = projectionsData[0].columns.values[-3]
-    # Left join fplPlayerData onto projections using a key of player name, team name and position name
+
+    # Left join fplPlayerData onto projections using a key of player name, team name and position name.
+    # We need to drop duplicates because the projections data do not have additional data to ensure a 1:1 join.
     df1 = df.merge(projectionsData[0], how='left', left_on=['web_name_clean', 'team_name', 'position_name'],
-                   right_on=['Name', 'Team', 'Pos'], indicator='merge_status')
+                   right_on=['Name', 'Team', 'Pos'], indicator='merge_status').drop_duplicates(
+        subset=['id'])
     d1 = df1.to_dict(orient='records')
 
     for i in range(len(d1)):
