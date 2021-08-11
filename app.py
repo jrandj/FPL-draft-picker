@@ -8,7 +8,6 @@ import argparse
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
-
 def import_data(myLeague, ffsusername, ffspassword):
     """Imports data from draft.premierleague and fantasyfootballscout.
 
@@ -360,9 +359,8 @@ def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCou
     print(tabulate(sortedPrintListIctIndex, headers="keys", tablefmt="github"))
 
     print(str(len(fplPlayerData['elements']) - inactiveCount)
-          + " active players from the official API have been matched to " + str(len(fplPlayerData['elements'])
-                                                                                - inactiveCount + (
-                                                                                        inactiveCount - nanCount)) + " valid Scout projections.")
+          + " active players from the official API have been matched to " + str(
+        len(fplPlayerData['elements']) - inactiveCount + (inactiveCount - nanCount)) + " valid Scout projections.")
     failed_merge = [i for i in fplPlayerData['elements'] if i['merge_status'] != 'both' and i['status'] != 'u']
     no_projections = [i for i in fplPlayerData['elements'] if
                       math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u']
@@ -500,7 +498,7 @@ def predict_fixtures(fplPlayerData, projectionsData, league_details):
     nextGameWeekHeader = projectionsData[0].columns.values[-8]
     for match in league_details['matches']:
         # assuming league size is 12
-        if game_count < 6 and match['finished'] == False:
+        if game_count < 6 and match['finished'] is False:
             player_one_players, nanCount, inactiveCount = get_players_for_team(fplPlayerData, projectionsData,
                                                                                id_to_entry_id(match['league_entry_1'],
                                                                                               league_details))
