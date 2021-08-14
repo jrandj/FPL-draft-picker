@@ -8,6 +8,7 @@ import argparse
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
+
 def import_data(myLeague, ffsusername, ffspassword):
     """Imports data from draft.premierleague and fantasyfootballscout.
 
@@ -136,7 +137,7 @@ def find_candidates(fplPlayerData, projectionsData, team):
     nextGameWeekPlusFive = projectionsData[0].columns.values[-3]
 
     # Left join fplPlayerData onto projections using a key of player name, team name and position name.
-    # We need to drop duplicates because the projections data do not have additional data to ensure a 1:1 join.
+    # We need to drop duplicates because the projections data does not have additional data to ensure a 1:1 join.
     df1 = df.merge(projectionsData[0], how='left', left_on=['web_name_clean', 'team_name', 'position_name'],
                    right_on=['Name', 'Team', 'Pos'], indicator='merge_status').drop_duplicates(
         subset=['id'])
@@ -289,15 +290,13 @@ def get_formations(team, nextGameWeekHeader):
     return formations
 
 
-def get_players_for_team(fplPlayerData, projectionsData, team):
+def get_players_for_team(fplPlayerData, team):
     """Print the players in the selected team along with candidates with a better projection.
 
     Parameters
     ----------
     fplPlayerData : dict
         The JSON containing player data from draft.premierleague.com
-    projectionsData : dict
-        The projections JSON from fantasyfootballscout.co.uk.
     team : String
         The JSON containing player data from a team
 
@@ -306,20 +305,13 @@ def get_players_for_team(fplPlayerData, projectionsData, team):
 
     """
     myTeam = []
-    nanCount = 0
-    inactiveCount = 0
-    sixGameProjectionHeader = projectionsData[0].columns.values[-2]
     for i in range(len(fplPlayerData['elements'])):
         if fplPlayerData['elements'][i]['selected'] == team:
             myTeam.append(fplPlayerData['elements'][i])
-        if math.isnan(fplPlayerData['elements'][i][sixGameProjectionHeader]):
-            nanCount = nanCount + 1
-        if fplPlayerData['elements'][i]['status'] == 'u':
-            inactiveCount = inactiveCount + 1
-    return myTeam, nanCount, inactiveCount
+    return myTeam
 
 
-def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCount):
+def print_candidates(fplPlayerData, projectionsData, team):
     """Print the players in the selected team along with candidates with a better projection.
 
     Parameters
@@ -330,10 +322,6 @@ def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCou
         The projections JSON from fantasyfootballscout.co.uk.
     team : dict
         The team that candidates are printed for
-    nanCount : int
-        The number of players that have a NaN fantasyfootballscout.co.uk projection.
-    inactiveCount : int
-        The number of inactive players.
 
     Raises
     ------
@@ -358,16 +346,18 @@ def print_candidates(fplPlayerData, projectionsData, team, nanCount, inactiveCou
     print(tabulate(sortedPrintListPoints, headers="keys", tablefmt="github"))
     print(tabulate(sortedPrintListIctIndex, headers="keys", tablefmt="github"))
 
-    print(str(len(fplPlayerData['elements']) - inactiveCount)
-          + " active players from the official API have been matched to " + str(
-        len(fplPlayerData['elements']) - inactiveCount + (inactiveCount - nanCount)) + " valid Scout projections.")
+    expected_results = [i for i in fplPlayerData['elements'] if i['status'] != 'u']
     failed_merge = [i for i in fplPlayerData['elements'] if i['merge_status'] != 'both' and i['status'] != 'u']
     no_projections = [i for i in fplPlayerData['elements'] if
-                      math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u']
+                      math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u' and i['merge_status'] == 'both']
     failed_merge_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status"]]
                                 for i in failed_merge]
     no_projections_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status"]]
                                   for i in no_projections]
+
+    print(str(len(expected_results))
+          + " active players from the official API have been matched to " + str(
+        len(expected_results) - len(failed_merge) - len(no_projections)) + " valid Scout projections.")
     print("The following merge failures occurred between the official API and the Scout projections: "
           + str(failed_merge_player_info))
     print("The following players were matched but have an invalid Scout projection: "
@@ -499,12 +489,10 @@ def predict_fixtures(fplPlayerData, projectionsData, league_details):
     for match in league_details['matches']:
         # assuming league size is 12
         if game_count < 6 and match['finished'] is False:
-            player_one_players, nanCount, inactiveCount = get_players_for_team(fplPlayerData, projectionsData,
-                                                                               id_to_entry_id(match['league_entry_1'],
-                                                                                              league_details))
-            player_two_players, nanCount, inactiveCount = get_players_for_team(fplPlayerData, projectionsData,
-                                                                               id_to_entry_id(match['league_entry_2'],
-                                                                                              league_details))
+            player_one_players = get_players_for_team(fplPlayerData,
+                                                      id_to_entry_id(match['league_entry_1'], league_details))
+            player_two_players = get_players_for_team(fplPlayerData,
+                                                      id_to_entry_id(match['league_entry_2'], league_details))
             fixture = {
                 "player_one": id_to_entry_name(match['league_entry_1'], league_details),
                 "player_one_score": get_formations(player_one_players, nextGameWeekHeader)[0]['Score'],
@@ -548,10 +536,10 @@ def main():
     fplPlayerData = find_candidates(fplPlayerData, projectionsData, myTeam)
     league_details = get_league_details(args.get('myLeague'))
     predict_fixtures(fplPlayerData, projectionsData, league_details)
-    myPlayers, nanCount, inactiveCount = get_players_for_team(fplPlayerData, projectionsData, myTeam)
+    myPlayers = get_players_for_team(fplPlayerData, myTeam)
     nextGameWeek = projectionsData[0].columns.values[-8]
     myFormations = get_formations(myPlayers, nextGameWeek)
-    print_candidates(fplPlayerData, projectionsData, myPlayers, nanCount, inactiveCount)
+    print_candidates(fplPlayerData, projectionsData, myPlayers)
     print_formations(myFormations)
 
 
