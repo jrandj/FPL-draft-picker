@@ -44,7 +44,9 @@ def import_data(myLeague, ffsusername, ffspassword):
         s1.post('https://members.fantasyfootballscout.co.uk/',
                 data={'username': ffsusername, 'password': ffspassword, 'login': '>+Log+In'})
         r3 = s1.get('https://members.fantasyfootballscout.co.uk/projections/six-game-projections/')
+        r4 = s1.get('https://members.fantasyfootballscout.co.uk/projections/season-projections/')
         r3.raise_for_status()
+        r4.raise_for_status()
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)
 
@@ -52,12 +54,13 @@ def import_data(myLeague, ffsusername, ffspassword):
     fplPlayerData = r2.json()
     try:
         projectionsData = pd.read_html(r3.content)
+        projectsDataSeason = pd.read_html(r4.content)
     except ValueError as err:
         # Todo: Figure out how to catch authentication failure when posting to the session instead.
         print("No data can be read from fantasyfootballscout, please check your credentials.")
         raise SystemExit(err)
 
-    return fplAvailabilityData, fplPlayerData, projectionsData
+    return fplAvailabilityData, fplPlayerData, projectionsData, projectsDataSeason
 
 
 def strip_special_characters(name):
@@ -84,7 +87,7 @@ def align_projections_data_to_official(projectionsData):
     Parameters
     ----------
     projectionsData : dict
-        The projections JSON from fantasyfootballscout.co.uk to be modified.
+        The six game projections JSON from fantasyfootballscout.co.uk to be modified.
 
     Raises
     ------
@@ -110,6 +113,34 @@ def align_projections_data_to_official(projectionsData):
     return projectionsData
 
 
+def find_total_points(fplPlayerData, projectionsDataSeason):
+    """Add the total projected score to the fplPlayerData object and return it.
+
+    Parameters
+    ----------
+    fplPlayerData : dict
+        The JSON containing player data from draft.premierleague.com
+    projectionsDataSeason : dict
+        The season projections JSON from fantasyfootballscout.co.uk.
+
+    Raises
+    ------
+
+    """
+    df = pd.DataFrame.from_dict(fplPlayerData['elements'])
+    # Left join fplPlayerData onto season projections using a key of player name, team name and position name.
+    # We need to drop duplicates because the projections data does not have additional data to ensure a 1:1 join.
+    df1 = df.merge(projectionsDataSeason[0], how='left', left_on=['web_name_clean', 'team_name', 'position_name'],
+                   right_on=['Name', 'Team', 'Pos'], indicator='merge_status_season').drop_duplicates(
+        subset=['id']).drop(columns=['Name', 'Team', 'Pos', 'FPL Price', 'Mins', 'G', 'A', 'CS', 'Bonus', 'YC'])
+    d1 = df1.to_dict(orient='records')
+
+    for i in range(len(d1)):
+        fplPlayerData['elements'][i]['merge_status_season'] = d1[i]['merge_status_season']
+        fplPlayerData['elements'][i]['FPL_Pts'] = d1[i]['FPL Pts']
+    return fplPlayerData
+
+
 def find_candidates(fplPlayerData, projectionsData, team):
     """Find candidates who have a better six game projection than the players in the selected team.
 
@@ -118,7 +149,7 @@ def find_candidates(fplPlayerData, projectionsData, team):
     fplPlayerData : dict
         The JSON containing player data from draft.premierleague.com
     projectionsData : dict
-        The projections JSON from fantasyfootballscout.co.uk.
+        The six game projections JSON from fantasyfootballscout.co.uk.
     team : String
         The team that candidates are being found for
 
@@ -136,10 +167,10 @@ def find_candidates(fplPlayerData, projectionsData, team):
     nextGameWeekPlusFour = projectionsData[0].columns.values[-4]
     nextGameWeekPlusFive = projectionsData[0].columns.values[-3]
 
-    # Left join fplPlayerData onto projections using a key of player name, team name and position name.
+    # Left join fplPlayerData onto six game projections using a key of player name, team name and position name.
     # We need to drop duplicates because the projections data does not have additional data to ensure a 1:1 join.
     df1 = df.merge(projectionsData[0], how='left', left_on=['web_name_clean', 'team_name', 'position_name'],
-                   right_on=['Name', 'Team', 'Pos'], indicator='merge_status').drop_duplicates(
+                   right_on=['Name', 'Team', 'Pos'], indicator='merge_status_six_game').drop_duplicates(
         subset=['id'])
     d1 = df1.to_dict(orient='records')
 
@@ -154,7 +185,7 @@ def find_candidates(fplPlayerData, projectionsData, team):
         fplPlayerData['elements'][i][nextGameWeekPlusThree] = d1[i][nextGameWeekPlusThree]
         fplPlayerData['elements'][i][nextGameWeekPlusFour] = d1[i][nextGameWeekPlusFour]
         fplPlayerData['elements'][i][nextGameWeekPlusFive] = d1[i][nextGameWeekPlusFive]
-        fplPlayerData['elements'][i]['merge_status'] = d1[i]['merge_status']
+        fplPlayerData['elements'][i]['merge_status_six_game'] = d1[i]['merge_status_six_game']
         if d1[i]['selected'] == team:
             for j in range(len(d1)):
                 if (d1[j][sixGameProjection] > d1[i][sixGameProjection]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
@@ -245,7 +276,7 @@ def add_player_to_formation(current_player, current_formation, formation):
 
 
 def get_formations(team, nextGameWeekHeader):
-    """Print team formations in order of highest scoring.
+    """Return team formations in descending order with the highest scoring at the top.
 
     Parameters
     ----------
@@ -291,7 +322,7 @@ def get_formations(team, nextGameWeekHeader):
 
 
 def get_players_for_team(fplPlayerData, team):
-    """Print the players in the selected team along with candidates with a better projection.
+    """Return the players in a particular team.
 
     Parameters
     ----------
@@ -319,7 +350,7 @@ def print_candidates(fplPlayerData, projectionsData, team):
     fplPlayerData : dict
         The JSON containing player data from draft.premierleague.com
     projectionsData : dict
-        The projections JSON from fantasyfootballscout.co.uk.
+        The six game projections JSON from fantasyfootballscout.co.uk.
     team : dict
         The team that candidates are printed for
 
@@ -347,12 +378,12 @@ def print_candidates(fplPlayerData, projectionsData, team):
     print(tabulate(sortedPrintListIctIndex, headers="keys", tablefmt="github"))
 
     expected_results = [i for i in fplPlayerData['elements'] if i['status'] != 'u']
-    failed_merge = [i for i in fplPlayerData['elements'] if i['merge_status'] != 'both' and i['status'] != 'u']
+    failed_merge = [i for i in fplPlayerData['elements'] if i['merge_status_six_game'] != 'both' and i['status'] != 'u']
     no_projections = [i for i in fplPlayerData['elements'] if
-                      math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u' and i['merge_status'] == 'both']
-    failed_merge_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status"]]
+                      math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u' and i['merge_status_six_game'] == 'both']
+    failed_merge_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status_six_game"]]
                                 for i in failed_merge]
-    no_projections_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status"]]
+    no_projections_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status_six_game"]]
                                   for i in no_projections]
 
     print(str(len(expected_results))
@@ -467,15 +498,42 @@ def id_to_entry_name(id, league_details):
     raise SystemExit()
 
 
-def predict_fixtures(fplPlayerData, projectionsData, league_details):
-    """Print the players in the selected team along with candidates with a better projection.
+def predict_league(fplPlayerData, projectionsData):
+    """Compare the best formation .
 
     Parameters
     ----------
     fplPlayerData : dict
         The JSON containing player data from draft.premierleague.com
     projectionsData : dict
-        The projections JSON from fantasyfootballscout.co.uk.
+        The six game projections JSON from fantasyfootballscout.co.uk.
+
+    Raises
+    ------
+
+    """
+    fixtures = []
+    nextGameWeekHeader = projectionsData[0].columns.values[-8]
+    players = []
+    formations = []
+
+    for i in fplPlayerData['teams']:
+        players[i] = get_players_for_team(fplPlayerData, i)
+        formations[i] = get_formations(i, nextGameWeekHeader)
+
+    print(tabulate(fixtures, headers="keys", tablefmt="github"))
+    return
+
+
+def predict_fixtures(fplPlayerData, projectionsData, league_details):
+    """Predict the next fixture using the formation with the highest projected points.
+
+    Parameters
+    ----------
+    fplPlayerData : dict
+        The JSON containing player data from draft.premierleague.com
+    projectionsData : dict
+        The six game projections JSON from fantasyfootballscout.co.uk.
     league_details : dict
         The mini-league details.
 
@@ -530,9 +588,11 @@ def main():
     args = vars(ap.parse_args())
 
     myTeam = get_team(args.get('myLeague'), args.get('myTeamName'))
-    fplAvailabilityData, fplPlayerData, projectionsData = \
+    fplAvailabilityData, fplPlayerData, projectionsData, projectionsDataSeason = \
         import_data(args.get('myLeague'), args.get('ffslogin'), args.get('ffspassword'))
     fplPlayerData = consolidate_data(fplAvailabilityData, fplPlayerData)
+    fplPlayerData = find_total_points(fplPlayerData, projectionsDataSeason)
+    #predict_league(fplPlayerData, projectionsDataSeason)
     fplPlayerData = find_candidates(fplPlayerData, projectionsData, myTeam)
     league_details = get_league_details(args.get('myLeague'))
     predict_fixtures(fplPlayerData, projectionsData, league_details)
