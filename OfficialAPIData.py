@@ -120,3 +120,47 @@ class OfficialAPIData:
                     if self.players['elements'][i]['status'] != 'u' and j['owner'] is None:
                         self.players['elements'][i]['available'] = 'Yes'
         return
+
+    @staticmethod
+    def id_to_entry_id(pid, OfficialAPIData):
+        """Gets the entry id from the entity id.
+
+        Parameters
+        ----------
+        id : int
+            The entity id.
+        OfficialAPIData : dict
+            The mini-league details.
+
+        Raises
+        ------
+
+        """
+        for entry in OfficialAPIData.league['league_entries']:
+            if entry['id'] == pid:
+                entity_id = entry['entry_id']
+                return entity_id
+        print("Id " + id + " not found in league.")
+        raise SystemExit()
+
+    @staticmethod
+    def id_to_entry_name(pid, OfficialAPIData):
+        """Gets the entity name from the entity id.
+
+        Parameters
+        ----------
+        id : int
+            The entity id.
+        league_details : dict
+            The mini-league details.
+
+        Raises
+        ------
+
+        """
+        for entry in OfficialAPIData.league['league_entries']:
+            if entry['id'] == pid:
+                entry_name = entry['entry_name']
+                return entry_name
+        print("Id " + pid + " not found in league.")
+        raise SystemExit()
