@@ -1,6 +1,8 @@
 import pandas as pd
 
 from Team import Team
+from OfficialAPIData import OfficialAPIData
+from ProjectionsData import ProjectionsData
 
 
 class ConsolidatedData:
@@ -9,49 +11,48 @@ class ConsolidatedData:
 
     Attributes
     ----------
-    username : str
-        The username used to authenticate.
-    password : str
-        The password used to authenticate.
-    seasonProjections : object
-        The season projections data.
-    sixGameProjections : object
-        The six game projections data.
+    teamName : str
+        The name of the team.
+    leagueID : sequence
+        The unique identifier for the league.
+    fantasyFootballScoutUsername : str
+        The username used to authenticate to Fantasy Football Scout.
+    fantasyFootballScoutPassword : str
+        The password used to authenticate to Fantasy Football Scout.
+    officialAPIData : object
+        An instance of OfficialAPIData.
+    projectionsData : object
+        An instance of ProjectionsData.
+    teamID : object
+        The players associated with teamName.
+    nextGameWeek : str
+        The upcoming game week.
 
     Methods
     -------
-    import_data()
-        Returns the projections data from Fantasy Football Scout.
+    get_formations()
+        Return team formations in descending order with the highest scoring at the top.
+    add_total_points_to_players()
+        Add the total projected scores to the players object.
+    add_candidates_to_players_based_on_projections()
+        Find candidates who have a better six game projection than existing players in the team and add the list
+        to the players object.
+    get_teamID_from_teamName()
+        Gets the unique identifier for the team from the teamName.
     """
-    def __init__(self, OfficialAPIData, ProjectionsData, teamName, leagueID):
+
+    def __init__(self, fantasyFootballScoutUsername, fantasyFootballScoutPassword, teamName, leagueID):
         self.teamName = teamName
         self.leagueID = leagueID
-        self.OfficialAPIData = OfficialAPIData
-        self.ProjectionsData = ProjectionsData
+        self.fantasyFootballScoutUsername = fantasyFootballScoutUsername
+        self.fantasyFootballScoutPassword = fantasyFootballScoutPassword
+        # OfficialAPIData.__init__(self, self.leagueID)
+        # ProjectionsData.__init__(self, self.fantasyFootballScoutUsername, self.fantasyFootballScoutPassword)
+        self.officialAPIData = OfficialAPIData(self.leagueID)
+        self.projectionsData = ProjectionsData(self.fantasyFootballScoutUsername, self.fantasyFootballScoutPassword)
         self.teamID = self.get_teamID_from_teamName()
         self.add_candidates_to_players_based_on_projections()
-        #self.team = self.get_players_for_team()
-        self.nextGameWeek = self.ProjectionsData.sixGameProjections[0].columns.values[-8]
-        #self.formations = self.get_formations(self.nextGameWeek, self.team)
-
-
-    def get_players_for_team(consolidatedData):
-        """Return the players in a particular team.
-
-        Parameters
-        ----------
-        consolidatedData : dict
-            The JSON containing player data from draft.premierleague.com
-
-        Raises
-        ------
-
-        """
-        myTeam = []
-        for i in range(len(consolidatedData.OfficialAPIData.players['elements'])):
-            if consolidatedData.OfficialAPIData.players['elements'][i]['selected'] == consolidatedData.teamName:
-                myTeam.append(consolidatedData.OfficialAPIData.players['elements'][i])
-        return myTeam
+        self.nextGameWeek = self.projectionsData.sixGameProjections[0].columns.values[-8]
 
     @staticmethod
     def get_formations(team, nextGameWeekHeader):
@@ -60,9 +61,9 @@ class ConsolidatedData:
         Parameters
         ----------
         team : dict
-            The JSON containing player data from a team
+            The JSON containing player data from a team.
         nextGameWeekHeader : string
-            The key for the projected points of the next game week
+            The key for the projected points of the upcoming game week.
 
         Raises
         ------
@@ -100,7 +101,7 @@ class ConsolidatedData:
         return formations
 
     def add_total_points_to_players(self):
-        """Add the total projected scores to the self.OfficialAPIData.players object.
+        """Add the total projected scores to the players object.
 
         Parameters
         ----------
@@ -109,22 +110,23 @@ class ConsolidatedData:
         ------
 
         """
-        df = pd.DataFrame.from_dict(self.OfficialAPIData.players['elements'])
+        df = pd.DataFrame.from_dict(self.officialAPIData.players['elements'])
         # Left join fplPlayerData onto season projections using a key of player name, team name and position name.
         # We need to drop duplicates because the projections data does not have additional data to ensure a 1:1 join.
-        df1 = df.merge(self.ProjectionsData.seasonProjections[0], how='left',
+        df1 = df.merge(self.projectionsData.seasonProjections[0], how='left',
                        left_on=['web_name_clean', 'team_name', 'position_name'],
                        right_on=['Name', 'Team', 'Pos'], indicator='merge_status_season').drop_duplicates(
             subset=['id']).drop(columns=['Name', 'Team', 'Pos', 'FPL Price', 'Mins', 'G', 'A', 'CS', 'Bonus', 'YC'])
         d1 = df1.to_dict(orient='records')
 
         for i in range(len(d1)):
-            self.OfficialAPIData.players['elements'][i]['merge_status_season'] = d1[i]['merge_status_season']
-            self.OfficialAPIData.players['elements'][i]['FPL_Pts'] = d1[i]['FPL Pts']
+            self.officialAPIData.players['elements'][i]['merge_status_season'] = d1[i]['merge_status_season']
+            self.officialAPIData.players['elements'][i]['FPL_Pts'] = d1[i]['FPL Pts']
         return
 
     def add_candidates_to_players_based_on_projections(self):
-        """Find candidates who have a better six game projection than the players in self.teamName.
+        """Find candidates who have a better six game projection than existing players in the team and add the list
+        to the players object.
 
         Parameters
         ----------
@@ -133,18 +135,19 @@ class ConsolidatedData:
         ------
 
         """
-        df = pd.DataFrame.from_dict(self.OfficialAPIData.players['elements'])
-        sixGameProjection = self.ProjectionsData.sixGameProjections[0].columns.values[-2]
-        nextGameWeek = self.ProjectionsData.sixGameProjections[0].columns.values[-8]
-        nextGameWeekPlusOne = self.ProjectionsData.sixGameProjections[0].columns.values[-7]
-        nextGameWeekPlusTwo = self.ProjectionsData.sixGameProjections[0].columns.values[-6]
-        nextGameWeekPlusThree = self.ProjectionsData.sixGameProjections[0].columns.values[-5]
-        nextGameWeekPlusFour = self.ProjectionsData.sixGameProjections[0].columns.values[-4]
-        nextGameWeekPlusFive = self.ProjectionsData.sixGameProjections[0].columns.values[-3]
+        df = pd.DataFrame.from_dict(self.officialAPIData.players['elements'])
+        sixGameProjection = self.projectionsData.sixGameProjections[0].columns.values[-2]
+        nextGameWeek = self.projectionsData.sixGameProjections[0].columns.values[-8]
+        nextGameWeekPlusOne = self.projectionsData.sixGameProjections[0].columns.values[-7]
+        nextGameWeekPlusTwo = self.projectionsData.sixGameProjections[0].columns.values[-6]
+        nextGameWeekPlusThree = self.projectionsData.sixGameProjections[0].columns.values[-5]
+        nextGameWeekPlusFour = self.projectionsData.sixGameProjections[0].columns.values[-4]
+        nextGameWeekPlusFive = self.projectionsData.sixGameProjections[0].columns.values[-3]
 
         # Left join fplPlayerData onto six game projections using a key of player name, team name and position name.
         # We need to drop duplicates because the projections data does not have additional data to ensure a 1:1 join.
-        df1 = df.merge(self.ProjectionsData.sixGameProjections[0], how='left', left_on=['web_name_clean', 'team_name', 'position_name'],
+        df1 = df.merge(self.projectionsData.sixGameProjections[0], how='left',
+                       left_on=['web_name_clean', 'team_name', 'position_name'],
                        right_on=['Name', 'Team', 'Pos'], indicator='merge_status_six_game').drop_duplicates(
             subset=['id'])
         d1 = df1.to_dict(orient='records')
@@ -153,14 +156,14 @@ class ConsolidatedData:
             candidates = {}
             candidates_this_gw = {}
             ict_index_candidates = {}
-            self.OfficialAPIData.players['elements'][i][sixGameProjection] = d1[i][sixGameProjection]
-            self.OfficialAPIData.players['elements'][i][nextGameWeek] = d1[i][nextGameWeek]
-            self.OfficialAPIData.players['elements'][i][nextGameWeekPlusOne] = d1[i][nextGameWeekPlusOne]
-            self.OfficialAPIData.players['elements'][i][nextGameWeekPlusTwo] = d1[i][nextGameWeekPlusTwo]
-            self.OfficialAPIData.players['elements'][i][nextGameWeekPlusThree] = d1[i][nextGameWeekPlusThree]
-            self.OfficialAPIData.players['elements'][i][nextGameWeekPlusFour] = d1[i][nextGameWeekPlusFour]
-            self.OfficialAPIData.players['elements'][i][nextGameWeekPlusFive] = d1[i][nextGameWeekPlusFive]
-            self.OfficialAPIData.players['elements'][i]['merge_status_six_game'] = d1[i]['merge_status_six_game']
+            self.officialAPIData.players['elements'][i][sixGameProjection] = d1[i][sixGameProjection]
+            self.officialAPIData.players['elements'][i][nextGameWeek] = d1[i][nextGameWeek]
+            self.officialAPIData.players['elements'][i][nextGameWeekPlusOne] = d1[i][nextGameWeekPlusOne]
+            self.officialAPIData.players['elements'][i][nextGameWeekPlusTwo] = d1[i][nextGameWeekPlusTwo]
+            self.officialAPIData.players['elements'][i][nextGameWeekPlusThree] = d1[i][nextGameWeekPlusThree]
+            self.officialAPIData.players['elements'][i][nextGameWeekPlusFour] = d1[i][nextGameWeekPlusFour]
+            self.officialAPIData.players['elements'][i][nextGameWeekPlusFive] = d1[i][nextGameWeekPlusFive]
+            self.officialAPIData.players['elements'][i]['merge_status_six_game'] = d1[i]['merge_status_six_game']
             if d1[i]['selected'] == self.teamID:
                 for j in range(len(d1)):
                     if (d1[j][sixGameProjection] > d1[i][sixGameProjection]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
@@ -175,13 +178,13 @@ class ConsolidatedData:
                 sorted_candidates = sorted(candidates.items(), key=lambda x: x[1], reverse=True)
                 sorted_candidates_this_gw = sorted(candidates_this_gw.items(), key=lambda x: x[1], reverse=True)
                 ict_index_candidates = sorted(ict_index_candidates.items(), key=lambda x: x[1], reverse=True)
-                self.OfficialAPIData.players['elements'][i]['candidates'] = sorted_candidates
-                self.OfficialAPIData.players['elements'][i]['candidates_this_gw'] = sorted_candidates_this_gw
-                self.OfficialAPIData.players['elements'][i]['ict_index_candidates'] = ict_index_candidates
+                self.officialAPIData.players['elements'][i]['candidates'] = sorted_candidates
+                self.officialAPIData.players['elements'][i]['candidates_this_gw'] = sorted_candidates_this_gw
+                self.officialAPIData.players['elements'][i]['ict_index_candidates'] = ict_index_candidates
         return
 
     def get_teamID_from_teamName(self):
-        """Gets the unique identifier for the team from the team name.
+        """Gets the unique identifier for the team from the teamName.
 
         Parameters
         ----------
@@ -192,7 +195,7 @@ class ConsolidatedData:
             If the teamName cannot be found in the leagueID.
         """
         found = 0
-        for i in self.OfficialAPIData.league['league_entries']:
+        for i in self.officialAPIData.league['league_entries']:
             if i['entry_name'] == self.teamName:
                 teamID = i['entry_id']
                 found = 1

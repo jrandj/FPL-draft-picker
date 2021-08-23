@@ -1,4 +1,3 @@
-import pandas as pd
 import requests
 
 
@@ -25,7 +24,7 @@ class OfficialAPIData:
 
     def __init__(self, leagueID):
         self.leagueID = leagueID
-        self.players, self.playerAvailability, self.league = self.import_data(leagueID)
+        self.players, self.playerAvailability, self.league = self.import_official_API_data(leagueID)
         self.add_availability_to_players()
 
     @staticmethod
@@ -51,7 +50,7 @@ class OfficialAPIData:
         raise SystemExit()
 
     @staticmethod
-    def import_data(leagueID):
+    def import_official_API_data(leagueID):
         """Imports data from the official draft.premierleague APIs.
 
         Parameters

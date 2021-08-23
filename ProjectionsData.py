@@ -23,21 +23,22 @@ class ProjectionsData:
         Returns the projections data from Fantasy Football Scout.
     """
 
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
-        self.sixGameProjections, self.seasonProjections = self.import_data(self.username, self.password)
+    def __init__(self, fantasyFootballScoutUsername, fantasyFootballScoutPassword):
+        self.fantasyFootballScoutUsername = fantasyFootballScoutUsername
+        self.fantasyFootballScoutPassword = fantasyFootballScoutPassword
+        self.sixGameProjections, self.seasonProjections = self.import_projections_data(self.fantasyFootballScoutUsername,
+                                                                           self.fantasyFootballScoutPassword)
         self.align_six_game_projections_with_official()
 
     @staticmethod
-    def import_data(username, password):
+    def import_projections_data(fantasyFootballScoutUsername, fantasyFootballScoutPassword):
         """Imports data from draft.premierleague and fantasyfootballscout.
 
         Parameters
         ----------
-        username : str
+        fantasyFootballScoutUsername : str
             The username used to authenticate.
-        password : str
+        fantasyFootballScoutPassword : str
             The password used to authenticate.
 
         Raises
@@ -51,7 +52,7 @@ class ProjectionsData:
         try:
             s1 = requests.session()
             s1.post('https://members.fantasyfootballscout.co.uk/',
-                    data={'username': username, 'password': password, 'login': '>+Log+In'})
+                    data={'username': fantasyFootballScoutUsername, 'password': fantasyFootballScoutPassword, 'login': '>+Log+In'})
             r1 = s1.get('https://members.fantasyfootballscout.co.uk/projections/six-game-projections/')
             r2 = s1.get('https://members.fantasyfootballscout.co.uk/projections/season-projections/')
             r1.raise_for_status()

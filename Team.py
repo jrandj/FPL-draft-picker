@@ -40,9 +40,9 @@ class Team:
 
         """
         team = []
-        for i in range(len(consolidatedData.OfficialAPIData.players['elements'])):
-            if consolidatedData.OfficialAPIData.players['elements'][i]['selected'] == teamID:
-                team.append(consolidatedData.OfficialAPIData.players['elements'][i])
+        for i in range(len(consolidatedData.officialAPIData.players['elements'])):
+            if consolidatedData.officialAPIData.players['elements'][i]['selected'] == teamID:
+                team.append(consolidatedData.officialAPIData.players['elements'][i])
         return team
 
     @staticmethod
@@ -67,7 +67,7 @@ class Team:
         player_index = 0
         total_points = 0
         current_formation = {'GKP': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
-        nextGameWeek = consolidatedData.ProjectionsData.sixGameProjections[0].columns.values[-8]
+        nextGameWeek = consolidatedData.projectionsData.sixGameProjections[0].columns.values[-8]
         playersInTeam.sort(key=lambda x: (x['position_name'], -x[nextGameWeek]))
         for formation in formations:
             team_copy = playersInTeam.copy()
@@ -138,8 +138,8 @@ class Team:
         """
         printListPoints = []
         printListIctIndex = []
-        sixGameProjectionHeader = self.consolidatedData.ProjectionsData.sixGameProjections[0].columns.values[-2]
-        nextGameWeekHeader = self.consolidatedData.ProjectionsData.sixGameProjections[0].columns.values[-8]
+        sixGameProjectionHeader = self.consolidatedData.projectionsData.sixGameProjections[0].columns.values[-2]
+        nextGameWeekHeader = self.consolidatedData.projectionsData.sixGameProjections[0].columns.values[-8]
 
         for i in self.playersInTeam:
             printDictPoints = OrderedDict((k, i[k]) for k in (
@@ -155,9 +155,9 @@ class Team:
         print(tabulate(sortedPrintListPoints, headers="keys", tablefmt="github"))
         print(tabulate(sortedPrintListIctIndex, headers="keys", tablefmt="github"))
 
-        expected_results = [i for i in self.consolidatedData.OfficialAPIData.players['elements'] if i['status'] != 'u']
-        failed_merge = [i for i in self.consolidatedData.OfficialAPIData.players['elements'] if i['merge_status_six_game'] != 'both' and i['status'] != 'u']
-        no_projections = [i for i in self.consolidatedData.OfficialAPIData.players['elements'] if
+        expected_results = [i for i in self.consolidatedData.officialAPIData.players['elements'] if i['status'] != 'u']
+        failed_merge = [i for i in self.consolidatedData.officialAPIData.players['elements'] if i['merge_status_six_game'] != 'both' and i['status'] != 'u']
+        no_projections = [i for i in self.consolidatedData.officialAPIData.players['elements'] if
                           math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u' and i[
                               'merge_status_six_game'] == 'both']
         failed_merge_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status_six_game"]]

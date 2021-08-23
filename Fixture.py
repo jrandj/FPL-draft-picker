@@ -1,4 +1,3 @@
-import pandas as pd
 from tabulate import tabulate
 from Team import Team
 
@@ -44,23 +43,23 @@ class Fixture:
         """
         fixtures = []
         game_count = 0
-        nextGameWeekHeader = consolidatedData.ProjectionsData.sixGameProjections[0].columns.values[-8]
-        for match in consolidatedData.OfficialAPIData.league['matches']:
+        nextGameWeekHeader = consolidatedData.projectionsData.sixGameProjections[0].columns.values[-8]
+        for match in consolidatedData.officialAPIData.league['matches']:
             # assuming league size is 12
             if game_count < 6 and match['finished'] is False:
                 player_one_players = Team.get_players_for_team(
-                    consolidatedData.OfficialAPIData.id_to_entry_id(match['league_entry_1'], consolidatedData.OfficialAPIData),
+                    consolidatedData.officialAPIData.id_to_entry_id(match['league_entry_1'], consolidatedData.officialAPIData),
                     consolidatedData)
                 player_two_players = Team.get_players_for_team(
-                    consolidatedData.OfficialAPIData.id_to_entry_id(match['league_entry_2'], consolidatedData.OfficialAPIData),
+                    consolidatedData.officialAPIData.id_to_entry_id(match['league_entry_2'], consolidatedData.officialAPIData),
                     consolidatedData)
                 fixture = {
-                    "player_one": consolidatedData.OfficialAPIData.id_to_entry_name(match['league_entry_1'],
-                                                                                  consolidatedData.OfficialAPIData),
+                    "player_one": consolidatedData.officialAPIData.id_to_entry_name(match['league_entry_1'],
+                                                                                  consolidatedData.officialAPIData),
                     "player_one_score": consolidatedData.get_formations(player_one_players, nextGameWeekHeader)[0][
                         'Score'],
-                    "player_two": consolidatedData.OfficialAPIData.id_to_entry_name(match['league_entry_2'],
-                                                                                  consolidatedData.OfficialAPIData),
+                    "player_two": consolidatedData.officialAPIData.id_to_entry_name(match['league_entry_2'],
+                                                                                  consolidatedData.officialAPIData),
                     "player_two_score": consolidatedData.get_formations(player_two_players, nextGameWeekHeader)[0][
                         'Score']
                 }
