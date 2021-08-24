@@ -19,39 +19,23 @@ class OfficialAPIData:
     Methods
     -------
     import_data()
-        Returns the performance results in a dictionary.
+        Import Official API data.
+    add_availability_to_players()
+        Augment player data with information from playerAvailability.
+    id_to_entry_id():
+        Gets the entry ID from the entity ID.
+    id_to_entry_name():
+        Gets the entry name from the entity ID.
     """
 
     def __init__(self, leagueID):
         self.leagueID = leagueID
-        self.players, self.playerAvailability, self.league = self.import_official_API_data(leagueID)
+        self.players, self.playerAvailability, self.league = self.import_data(leagueID)
         self.add_availability_to_players()
 
     @staticmethod
-    def id_to_entry_id(pid, league):
-        """Gets the entry id from the entity id.
-
-        Parameters
-        ----------
-        pid : int
-            The entity id.
-        league : dict
-            The league details.
-
-        Raises
-        ------
-
-        """
-        for entry in league['league_entries']:
-            if entry['id'] == pid:
-                entity_id = entry['entry_id']
-                return entity_id
-        print("Id " + pid + " not found in league.")
-        raise SystemExit()
-
-    @staticmethod
-    def import_official_API_data(leagueID):
-        """Imports data from the official draft.premierleague APIs.
+    def import_data(leagueID):
+        """Import Official API data.
 
         Parameters
         ----------
@@ -62,7 +46,6 @@ class OfficialAPIData:
         ------
         requests.exceptions.HTTPError:
             If any HTTP errors are encountered when retrieving data.
-
         """
 
         try:
@@ -120,46 +103,42 @@ class OfficialAPIData:
                         self.players['elements'][i]['available'] = 'Yes'
         return
 
-    @staticmethod
-    def id_to_entry_id(pid, OfficialAPIData):
-        """Gets the entry id from the entity id.
+    def id_to_entry_id(self, pid):
+        """Gets the entry ID from the entity ID.
 
         Parameters
         ----------
-        id : int
+        pid : int
             The entity id.
-        OfficialAPIData : dict
-            The mini-league details.
 
         Raises
         ------
-
+        SystemExit:
+            If the entry ID cannot be found for the entity ID.
         """
-        for entry in OfficialAPIData.league['league_entries']:
+        for entry in self.league['league_entries']:
             if entry['id'] == pid:
                 entity_id = entry['entry_id']
                 return entity_id
-        print("Id " + id + " not found in league.")
+        print("No entry_id found for ID: " + pid + " in league.")
         raise SystemExit()
 
-    @staticmethod
-    def id_to_entry_name(pid, OfficialAPIData):
-        """Gets the entity name from the entity id.
+    def id_to_entry_name(self, pid):
+        """Gets the entry name from the entity ID.
 
         Parameters
         ----------
-        id : int
-            The entity id.
-        league_details : dict
-            The mini-league details.
+        pid : int
+            The entity ID.
 
         Raises
         ------
-
+        SystemExit:
+            If the entry name cannot be found for the entity ID.
         """
-        for entry in OfficialAPIData.league['league_entries']:
+        for entry in self.league['league_entries']:
             if entry['id'] == pid:
                 entry_name = entry['entry_name']
                 return entry_name
-        print("Id " + pid + " not found in league.")
+        print("No entry_name found for ID: " + pid + " in league.")
         raise SystemExit()

@@ -47,10 +47,10 @@ To check for outdated packages run `pip3 list --outdated`.
 Run the script from the command line:
 
 ```python
-app.py -myLeague <value> -myTeamName <value> -ffslogin <value> -ffspassword <value>
+fpldraft.py -leagueID <value> -teamName <value> -fantasyFootballScoutUsername <value> -fantasyFootballScoutPassword <value>
 ```
 Values for the parameters can be found as per the below:
-* myLeague - This can be found by inspecting the HTTP GET request to the details endpoint (e.g. `draft.premierleague.com/api/league/<value>/details`) from the League tab in your browsers developer console.
-* myTeamName - The name of the team as shown at `draft.premierleague.com`.
-* ffslogin - Fantasy football scout login.
-* ffspassword - Fantasy football scout password.
+* leagueID - This can be found by inspecting the HTTP GET request to the details endpoint (e.g. `draft.premierleague.com/api/league/<value>/details`) from the League tab in your browsers developer console.
+* teamName - The name of the team as shown at `draft.premierleague.com`.
+* fantasyFootballScoutUsername - Fantasy Football Scout username.
+* fantasyFootballScoutPassword - Fantasy Football Scout password.

@@ -4,38 +4,30 @@ from Team import Team
 
 class Fixture:
     """
-    A class that contains projections data from Fantasy Football Scout.
+    A class that represents a fixture.
 
     Attributes
     ----------
-    username : str
-        The username used to authenticate.
-    password : str
-        The password used to authenticate.
-    seasonProjections : object
-        The season projections data.
-    sixGameProjections : object
-        The six game projections data.
+    nextGameWeek : str
+        The upcoming game week.
 
     Methods
     -------
-    import_data()
-        Returns the projections data from Fantasy Football Scout.
+    predict_fixtures()
+        Predict the next fixture using the formation with the highest projected points for each team.
     """
 
-    def __init__(self, GameWeek):
-        self.nextGameWeek = GameWeek
+    def __init__(self, nextGameWeek):
+        self.nextGameWeek = nextGameWeek
 
     @staticmethod
     def predict_fixtures(consolidatedData):
-        """Predict the next fixture using the formation with the highest projected points.
+        """Predict the next fixture using the formation with the highest projected points for each team.
 
         Parameters
         ----------
         consolidatedData : object
-            TBC
-        teamID : object
-            TBC
+            An instance of ConsolidatedData.
 
         Raises
         ------
@@ -48,18 +40,16 @@ class Fixture:
             # assuming league size is 12
             if game_count < 6 and match['finished'] is False:
                 player_one_players = Team.get_players_for_team(
-                    consolidatedData.officialAPIData.id_to_entry_id(match['league_entry_1'], consolidatedData.officialAPIData),
+                    consolidatedData.officialAPIData.id_to_entry_id(match['league_entry_1']),
                     consolidatedData)
                 player_two_players = Team.get_players_for_team(
-                    consolidatedData.officialAPIData.id_to_entry_id(match['league_entry_2'], consolidatedData.officialAPIData),
+                    consolidatedData.officialAPIData.id_to_entry_id(match['league_entry_2']),
                     consolidatedData)
                 fixture = {
-                    "player_one": consolidatedData.officialAPIData.id_to_entry_name(match['league_entry_1'],
-                                                                                  consolidatedData.officialAPIData),
+                    "player_one": consolidatedData.officialAPIData.id_to_entry_name(match['league_entry_1']),
                     "player_one_score": consolidatedData.get_formations(player_one_players, nextGameWeekHeader)[0][
                         'Score'],
-                    "player_two": consolidatedData.officialAPIData.id_to_entry_name(match['league_entry_2'],
-                                                                                  consolidatedData.officialAPIData),
+                    "player_two": consolidatedData.officialAPIData.id_to_entry_name(match['league_entry_2']),
                     "player_two_score": consolidatedData.get_formations(player_two_players, nextGameWeekHeader)[0][
                         'Score']
                 }

@@ -5,18 +5,35 @@ from tabulate import tabulate
 
 class Team:
     """
-    A class that contains the players team.
+    A class that represents a team.
 
     Attributes
     ----------
-    username : str
-        The username used to authenticate.
+    teamName : str
+        The name of the team.
+    teamID : str
+        The unique identifier of the team.
+    consolidatedData : object
+        An instance of ConsolidatedData.
+    playersInTeam : sequence
+        A list of the players in the team.
+    formations : sequence
+        A list of the possible formations for the team and their projected points total in the next fixture.
 
     Methods
     -------
-    import_data()
-        Returns the projections data from Fantasy Football Scout.
+    get_players_for_team()
+        Return the players in the team.
+    get_formations_for_team()
+        Return team formations in descending order with the highest scoring at the top.
+    add_player_to_formation
+        Attempt to add a player to a formation.
+    print_candidates():
+        Print the players in the selected team along with candidates who have a better projected score.
+    print_formations(self):
+        Print the formations.
     """
+
     def __init__(self, teamName, teamID, consolidatedData):
         self.teamName = teamName
         self.teamID = teamID
@@ -30,10 +47,10 @@ class Team:
 
         Parameters
         ----------
-        teamID : object
-            TBC
+        teamID : str
+            The unique identifier of the team.
         consolidatedData : object
-            TBC
+            An instance of ConsolidatedData.
 
         Raises
         ------
@@ -51,6 +68,10 @@ class Team:
 
         Parameters
         ----------
+        playersInTeam : sequence
+            A list of the players in the team.
+        consolidatedData : object
+            An instance of ConsolidatedData.
 
         Raises
         ------
@@ -95,11 +116,11 @@ class Team:
         Parameters
         ----------
         current_player : dict
-            The proposed player
+            The proposed player.
         current_formation : dict
-            The current formation
+            The current formation.
         formation : dict
-            The formation that we are working towards
+            The current formation for which the player is proposed.
 
         Raises
         ------
@@ -121,16 +142,10 @@ class Team:
         return player_added
 
     def print_candidates(self):
-        """Print the players in the selected team along with candidates with a better projection.
+        """Print the players in the selected team along with candidates who have a better projected score.
 
         Parameters
         ----------
-        fplPlayerData : dict
-            The JSON containing player data from draft.premierleague.com
-        projectionsData : dict
-            The six game projections JSON from fantasyfootballscout.co.uk.
-        team : dict
-            The team that candidates are printed for
 
         Raises
         ------
@@ -156,14 +171,17 @@ class Team:
         print(tabulate(sortedPrintListIctIndex, headers="keys", tablefmt="github"))
 
         expected_results = [i for i in self.consolidatedData.officialAPIData.players['elements'] if i['status'] != 'u']
-        failed_merge = [i for i in self.consolidatedData.officialAPIData.players['elements'] if i['merge_status_six_game'] != 'both' and i['status'] != 'u']
+        failed_merge = [i for i in self.consolidatedData.officialAPIData.players['elements'] if
+                        i['merge_status_six_game'] != 'both' and i['status'] != 'u']
         no_projections = [i for i in self.consolidatedData.officialAPIData.players['elements'] if
                           math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u' and i[
                               'merge_status_six_game'] == 'both']
-        failed_merge_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status_six_game"]]
-                                    for i in failed_merge]
-        no_projections_player_info = [[i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status_six_game"]]
-                                      for i in no_projections]
+        failed_merge_player_info = [
+            [i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status_six_game"]]
+            for i in failed_merge]
+        no_projections_player_info = [
+            [i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status_six_game"]]
+            for i in no_projections]
 
         print(str(len(expected_results))
               + " active players from the official API have been matched to " + str(
@@ -175,12 +193,10 @@ class Team:
         return
 
     def print_formations(self):
-        """Print the formations for a player.
+        """Print the formations.
 
         Parameters
         ----------
-        formations : list
-            The list of formations.
 
         Raises
         ------

@@ -8,31 +8,33 @@ class ProjectionsData:
 
     Attributes
     ----------
-    username : str
+    fantasyFootballScoutUsername : str
         The username used to authenticate.
-    password : str
+    fantasyFootballScoutPassword : str
         The password used to authenticate.
-    seasonProjections : object
-        The season projections data.
     sixGameProjections : object
+        The season projections data.
+    seasonProjections : object
         The six game projections data.
 
     Methods
     -------
     import_data()
-        Returns the projections data from Fantasy Football Scout.
+        Import projections data from Fantasy Football Scout.
+    align_six_game_projections_with_official()
+        Align team names and player names from projectionsData.sixGameProjections to OfficialAPIData.players.
     """
 
     def __init__(self, fantasyFootballScoutUsername, fantasyFootballScoutPassword):
         self.fantasyFootballScoutUsername = fantasyFootballScoutUsername
         self.fantasyFootballScoutPassword = fantasyFootballScoutPassword
-        self.sixGameProjections, self.seasonProjections = self.import_projections_data(self.fantasyFootballScoutUsername,
+        self.sixGameProjections, self.seasonProjections = self.import_data(self.fantasyFootballScoutUsername,
                                                                            self.fantasyFootballScoutPassword)
         self.align_six_game_projections_with_official()
 
     @staticmethod
-    def import_projections_data(fantasyFootballScoutUsername, fantasyFootballScoutPassword):
-        """Imports data from draft.premierleague and fantasyfootballscout.
+    def import_data(fantasyFootballScoutUsername, fantasyFootballScoutPassword):
+        """Import projections data from Fantasy Football Scout.
 
         Parameters
         ----------
@@ -47,12 +49,12 @@ class ProjectionsData:
             If any HTTP errors are encountered when retrieving data.
         ValueError:
             If the projections cannot be parsed.
-
         """
         try:
             s1 = requests.session()
             s1.post('https://members.fantasyfootballscout.co.uk/',
-                    data={'username': fantasyFootballScoutUsername, 'password': fantasyFootballScoutPassword, 'login': '>+Log+In'})
+                    data={'username': fantasyFootballScoutUsername, 'password': fantasyFootballScoutPassword,
+                          'login': '>+Log+In'})
             r1 = s1.get('https://members.fantasyfootballscout.co.uk/projections/six-game-projections/')
             r2 = s1.get('https://members.fantasyfootballscout.co.uk/projections/season-projections/')
             r1.raise_for_status()
@@ -78,7 +80,6 @@ class ProjectionsData:
 
         Raises
         ------
-
         """
         self.sixGameProjections[0]['Team'].loc[
             self.sixGameProjections[0]['Team'] == 'BRI'] = 'BHA'

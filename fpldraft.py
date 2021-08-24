@@ -9,7 +9,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 class Draft:
     """
-    A class that contains projections data from Fantasy Football Scout.
+    The top level class for the FPL-Draft application.
 
     Attributes
     ----------
@@ -31,7 +31,7 @@ class Draft:
     Methods
     -------
     parse_input()
-        Return team formations in descending order with the highest scoring at the top.
+        Parse the user input.
     """
 
     def __init__(self):
