@@ -80,6 +80,7 @@ class ProjectionsData:
 
         Raises
         ------
+
         """
         self.sixGameProjections[0]['Team'].loc[
             self.sixGameProjections[0]['Team'] == 'BRI'] = 'BHA'

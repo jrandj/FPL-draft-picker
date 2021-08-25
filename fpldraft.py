@@ -32,6 +32,8 @@ class Draft:
     -------
     parse_input()
         Parse the user input.
+    print()
+        Print the results.
     """
 
     def __init__(self):
@@ -40,11 +42,20 @@ class Draft:
         self.consolidatedData = ConsolidatedData(self.fantasyFootballScoutUsername, self.fantasyFootballScoutPassword,
                                                  self.teamName,
                                                  self.leagueID)
-        self.fixture = Fixture(self.consolidatedData.nextGameWeek)
+        self.fixture = Fixture(self.consolidatedData)
         self.team = Team(self.teamName, self.consolidatedData.teamID, self.consolidatedData)
 
     @staticmethod
     def parse_input():
+        """Parse the user input.
+
+        Parameters
+        ----------
+
+        Raises
+        ------
+
+        """
         ap = argparse.ArgumentParser()
         ap.add_argument("-leagueID", required=True, help="The minileague")
         ap.add_argument("-teamName", required=True, help="The team")
@@ -57,12 +68,25 @@ class Draft:
         fantasyFootballScoutPassword = args.get('fantasyFootballScoutPassword')
         return leagueID, teamName, fantasyFootballScoutUsername, fantasyFootballScoutPassword
 
+    def print(self):
+        """Print the results.
+
+        Parameters
+        ----------
+
+        Raises
+        ------
+
+        """
+        self.fixture.predict_fixtures()
+        self.fixture.print_fixture_predictions()
+        self.team.print_candidates()
+        self.team.print_formations()
+
 
 def main():
     draft = Draft()
-    draft.fixture.predict_fixtures(draft.consolidatedData)
-    draft.team.print_candidates()
-    draft.team.print_formations()
+    draft.print()
 
 
 if __name__ == "__main__":
