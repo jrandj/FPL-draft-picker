@@ -19,6 +19,10 @@ class Team:
         A list of the players in the team.
     formations : sequence
         A list of the possible formations for the team and their projected points total in the next fixture.
+    candidates_representation:
+        A subset of players with six game projections added.
+    formations_representation: str
+        A representation of the formations of the team.
 
     Methods
     -------
@@ -28,10 +32,10 @@ class Team:
         Return team formations in descending order with the highest scoring at the top.
     add_player_to_formation
         Attempt to add a player to a formation.
-    print_candidates():
-        Print the players in the selected team along with candidates who have a better projected score.
-    print_formations(self):
-        Print the formations.
+    generate_candidates_representation():
+        Generate a representation of the candidates.
+    generate_formations_representation():
+        Generate a representation of the formations of the team.
     """
 
     def __init__(self, teamName, teamID, consolidatedData):
@@ -40,6 +44,8 @@ class Team:
         self.consolidatedData = consolidatedData
         self.playersInTeam = self.get_players_for_team(self.teamID, self.consolidatedData)
         self.formations = self.get_formations_for_team(self.playersInTeam, self.consolidatedData)
+        self.candidates_representation = self.generate_candidates_representation()
+        self.formations_representation = self.generate_formations_representation()
 
     @staticmethod
     def get_players_for_team(teamID, consolidatedData):
@@ -141,8 +147,8 @@ class Team:
 
         return player_added
 
-    def print_candidates(self):
-        """Print the players in the selected team along with candidates who have a better projected score.
+    def generate_candidates_representation(self):
+        """Generate a representation of the candidates.
 
         Parameters
         ----------
@@ -167,8 +173,8 @@ class Team:
 
         sortedPrintListPoints = sorted(printListPoints, key=lambda x: (x['position_name'], -x[sixGameProjectionHeader]))
         sortedPrintListIctIndex = sorted(printListIctIndex, key=lambda x: (x['position_name'], -float(x['ict_index'])))
-        print(tabulate(sortedPrintListPoints, headers="keys", tablefmt="github"))
-        print(tabulate(sortedPrintListIctIndex, headers="keys", tablefmt="github"))
+        # print(tabulate(sortedPrintListPoints, headers="keys", tablefmt="github"))
+        # print(tabulate(sortedPrintListIctIndex, headers="keys", tablefmt="github"))
 
         expected_results = [i for i in self.consolidatedData.officialAPIData.players['elements'] if i['status'] != 'u']
         failed_merge = [i for i in self.consolidatedData.officialAPIData.players['elements'] if
@@ -183,17 +189,25 @@ class Team:
             [i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status_six_game"]]
             for i in no_projections]
 
-        print(str(len(expected_results))
-              + " active players from the official API have been matched to " + str(
-            len(expected_results) - len(failed_merge) - len(no_projections)) + " valid Scout projections.")
-        print("The following merge failures occurred between the official API and the Scout projections: "
-              + str(failed_merge_player_info))
-        print("The following players were matched but have an invalid Scout projection: "
-              + str(no_projections_player_info))
-        return
+        candidates_representation = str(
+            tabulate(sortedPrintListPoints, headers="keys", tablefmt="html", stralign="left", numalign="left",
+                     colalign="left") + "<br>" +
+            tabulate(sortedPrintListIctIndex, headers="keys", tablefmt="html", stralign="left", numalign="left",
+                     colalign="left") +
+            "<br>" + str(len(expected_results))
+            + " active players from the Official Fantasy Premier League API have been matched to "
+            + str(len(expected_results) - len(failed_merge) - len(no_projections))
+            + " Fantasy Football Scout six game projections."
+            + "<br>" + "The following merge failures occurred between the official Fantasy Premier League API and "
+                       "the Fantasy Football Scout six game projections: "
+            + str(failed_merge_player_info)
+            + "<br> The following players were matched but have an invalid Fantasy Football Scout six game projection: "
+            + str(no_projections_player_info)) + "<br>"
 
-    def print_formations(self):
-        """Print the formations.
+        return candidates_representation
+
+    def generate_formations_representation(self):
+        """Generate a representation of the formations of the team.
 
         Parameters
         ----------
@@ -202,5 +216,6 @@ class Team:
         ------
 
         """
-        print("Formations and their scores: " + str(sorted(self.formations, key=lambda x: (x['Score']), reverse=True)))
-        return
+        formations_representation = "Formations and their scores: " + str(
+            sorted(self.formations, key=lambda x: (x['Score']), reverse=True)) + "<br>"
+        return formations_representation

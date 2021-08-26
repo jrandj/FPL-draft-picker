@@ -8,8 +8,12 @@ class Fixture:
 
     Attributes
     ----------
-    nextGameWeek : str
-        The upcoming game week.
+    consolidatedData : object
+        An instance of ConsolidatedData.
+    fixtures : sequence
+        The fixtures and their projected scores.
+    representation : str
+        A representation of the results.
 
     Methods
     -------
@@ -17,11 +21,14 @@ class Fixture:
         Predict the next fixture using the formation with the highest projected points for each team.
     print_fixture_predictions():
         Print the fixtures.
+    generate_representation():
+        Generate a representation of the results.
     """
 
     def __init__(self, consolidatedData):
         self.consolidatedData = consolidatedData
         self.fixtures = self.predict_fixtures()
+        self.representation = self.generate_representation()
 
     def predict_fixtures(self):
         """Generate the fixtures object to show the highest projected points for each team.
@@ -60,8 +67,8 @@ class Fixture:
                 game_count = game_count + 1
         return fixtures
 
-    def print_fixture_predictions(self):
-        """Print the fixtures.
+    def generate_representation(self):
+        """Generate a representation of the results.
 
         Parameters
         ----------
@@ -70,4 +77,5 @@ class Fixture:
         ------
 
         """
-        print(tabulate(self.fixtures, headers="keys", tablefmt="github"))
+        return str(tabulate(self.fixtures, headers="keys", tablefmt="html", stralign="left", numalign="left",
+                            colalign="left") + "<br>")

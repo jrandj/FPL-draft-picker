@@ -1,5 +1,6 @@
 import pandas as pd
 import argparse
+import time
 from ConsolidatedData import ConsolidatedData
 from Fixture import Fixture
 from Team import Team
@@ -32,8 +33,8 @@ class Draft:
     -------
     parse_input()
         Parse the user input.
-    print()
-        Print the results.
+    write_results()
+        Write the results to file.
     """
 
     def __init__(self):
@@ -68,8 +69,8 @@ class Draft:
         fantasyFootballScoutPassword = args.get('fantasyFootballScoutPassword')
         return leagueID, teamName, fantasyFootballScoutUsername, fantasyFootballScoutPassword
 
-    def print(self):
-        """Print the results.
+    def write_results(self):
+        """Write the results to file.
 
         Parameters
         ----------
@@ -78,15 +79,16 @@ class Draft:
         ------
 
         """
-        self.fixture.predict_fixtures()
-        self.fixture.print_fixture_predictions()
-        self.team.print_candidates()
-        self.team.print_formations()
+        f = open("fpldraft-results-" + time.strftime("%Y%m%d-%H%M%S") + ".html", "w")
+        f.write(self.fixture.representation)
+        f.write(self.team.candidates_representation)
+        f.write(self.team.formations_representation)
+        f.close()
 
 
 def main():
     draft = Draft()
-    draft.print()
+    draft.write_results()
 
 
 if __name__ == "__main__":
