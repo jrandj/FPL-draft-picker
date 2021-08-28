@@ -6,17 +6,15 @@ projected score than players already in the selected team. This application uses
 
 ## Output
 
-**Team Suggestions - Projected Points**
-![figure2](res/player_suggestions.JPG)
+The output provides:
+* Score predictions for the next H2H fixture.
+* Players who have a higher six game projected score.
+* Players who have a higher projected score in the next gameweek.
+* Players who have a higher Influence, Creativity and Threat (ICT) index.
+* Formation recommendations based on the projected score in the next gameweek.
 
-**Team Suggestions - ICT Index**
-![figure2](res/ict_suggestions.JPG)
-
-**Formation Suggestions**
-![figure3](res/formation_suggestions.JPG)
-
-**Fixture Prediction**
-![figure1](res/fixture_prediction.JPG)
+**Sample Output**
+	![figure1](res/fpldraft-results-20212808-132538.html)
 
 ## Getting Started
 
@@ -49,6 +47,9 @@ Run the script from the command line:
 ```python
 fpldraft.py -leagueID <value> -teamName <value> -fantasyFootballScoutUsername <value> -fantasyFootballScoutPassword <value>
 ```
+
+A file `fpldraft_results_%Y%d%m-%H%M%S.html` will be created in the same directory.
+
 Values for the parameters can be found as per the below:
 * leagueID - This can be found by inspecting the HTTP GET request to the details endpoint (e.g. `draft.premierleague.com/api/league/<value>/details`) from the League tab in your browsers developer console.
 * teamName - The name of the team as shown at `draft.premierleague.com`.
