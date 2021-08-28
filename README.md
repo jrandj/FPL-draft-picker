@@ -6,7 +6,7 @@ projected score than players already in the selected team. This application uses
 
 ## Output
 
-The output (sample available ![here](https://htmlpreview.github.io/?https://github.com/jrandj/FPL-draft-picker/blob/master/res/fpldraft-results-20212808-132538.html)) provides:
+The output (sample available <a href="https://htmlpreview.github.io/?https://github.com/jrandj/FPL-draft-picker/blob/master/res/fpldraft-results-20212808-132538.html" title="here">here</a>) provides:
 * Score predictions for the next H2H fixture.
 * Players who have a higher six game projected score.
 * Players who have a higher projected score in the next game week.
