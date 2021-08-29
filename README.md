@@ -36,30 +36,25 @@ The output (sample available <a href="https://htmlpreview.github.io/?https://git
 * Python 3.8
 
 ### Installation
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install FPL-draft-picker. Using Windows Command Prompt:
+Use [pipenv](https://github.com/pypa/pipenv) to install FPL-draft-picker. Using the Windows Command Prompt:
 
-1. Create a virtual environment:
+1. Create the virtual environment:
     ```bash
-    py -m venv venv
+    pipenv install
     ```
 
-2. Activate virtual environment:
+2. Activate the virtual environment:
     ```bash
-    "venv/Scripts/activate.bat"
+    pipenv shell
     ```
 
-3. Install dependencies:
-    ```bash
-    pip3 install -r requirements.txt
-    ```
-
-To check for outdated packages run `pip3 list --outdated`.
+To check for and update outdated packages run `pipenv update --outdated`. To uninstall run `pipenv uninstall`.
    
 ### Usage
 Run the script from the command line:
 
 ```python
-fpldraft.py -leagueID <value> -teamName <value> -fantasyFootballScoutUsername <value> -fantasyFootballScoutPassword <value>
+python fpldraft.py -leagueID <value> -teamName <value> -fantasyFootballScoutUsername <value> -fantasyFootballScoutPassword <value>
 ```
 
 A file `fpldraft_results_%Y%d%m-%H%M%S.html` will be created in the same directory.
