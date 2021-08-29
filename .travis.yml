@@ -3,9 +3,5 @@ python:
 - '3.8'
 install:
 - pipenv install
-env:
-  global:
-    secure: HuN7mSxUfm+CMWujyWFd/7qrDGdlDlxpLzHcXCmo9+8JFyKFF/5o3gx2/zAmtkchlrxswq5IyJS+lHX/z1NZQ4GeQ5uvdk7QyfjIA27psXBS+RQ0HvSyYHmbeg+yQ9PxpOR4cwIPi/ohUCJfs3Oz1Hqu8gqCdRyzlO0kk5Gum2PEIfdjlJZFcZrGmDSFrRrqnZnaKazvKSKSXSmrssLIXgRMmcaeS4/+beBzMh7TaijpI6dRZ/i2zmiOC4+mbp6THC6dCgzixTBYdb8yWUdLhyLhN0XwASd7NneU+TsRAigRJ5b9nhkraSgzc8MkgWyW9k9EG+UoK8b5/fcn6G4zs2jSn761CXbh1k/0LqXlLeDjrgW/dnY4nyLlp3mT5Limu+fcKHOBGoCkdW7ommhN5/+oOwJO5TxfE1/tkDHlt3BddCUdEPo35Iqz/iBa/8mcATTHiPyjf5V8Nwv7vCzU0+WSEHzZjGRZxbLRVAH3/2hj8G/8i0IkMDWuoUjYn8NDZB6ut3JypV50Y+A9R4PIvniacyKb6EwQldrpoaGNeGkNDEesHTWeDAR0I1F8HqZlq78xTACSBpaQmn69K/D2KCqDQtBwYtr2peHIp46YGzEeDEothFPxGarKp/lKRUYwhj0qSHJzz078oxnn5hjPtVXn16D6BO6nodok5fXlx9o=
 script:
-- python fpldraft.py -leagueID 3441 -teamName "randys11" -fantasyFootballScoutUsername
-  jrandj -fantasyFootballScoutPassword $secure
+- python fpldraft.py -leagueID 3441 -teamName "randys11" -fantasyFootballScoutUsername $fantasyFootballScoutUsername -fantasyFootballScoutPassword $fantasyFootballScoutPassword
