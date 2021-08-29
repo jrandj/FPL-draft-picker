@@ -4,6 +4,23 @@ FPL-draft-picker is a Python application for finding available players in the se
 projected score than players already in the selected team. This application uses APIs available from 
 `draft.premierleague.com` to obtain player data and then matches against the projections from `fantasyfootballscout.co.uk`.
 
+## Architecture
+
+The package structure is shown below:
+	<p align="center">
+	<img src="/res/packages.png">
+	</p>
+
+The class structure is shown below:
+	<p align="center">
+	<img src="/res/classes.png">
+	</p>
+
+The diagrams have been using pyreverse:
+    ```bash
+    pyreverse -o png .
+    ```
+
 ## Output
 
 The output (sample available <a href="https://htmlpreview.github.io/?https://github.com/jrandj/FPL-draft-picker/blob/master/res/fpldraft-results-20212808-132538.html" title="here">here</a>) provides:
