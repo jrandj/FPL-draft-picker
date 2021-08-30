@@ -1,3 +1,18 @@
+<p align="center">
+    A Python application to find better players for your team!
+    <br>
+    <br>
+    <a href="https://app.travis-ci.com/jrandj/FPL-draft-picker" alt="Build">
+        <img src="https://app.travis-ci.com/jrandj/FPL-draft-picker.svg?branch=master" />
+    </a>
+    <a href="https://img.shields.io/github/pipenv/locked/python-version/jrandj/FPL-draft-picker" alt="Python version">
+        <img src="https://img.shields.io/github/pipenv/locked/python-version/jrandj/FPL-draft-picker" />
+    </a>
+    <a href="https://img.shields.io/github/license/jrandj/FPL-draft-picker" alt="Python version">
+        <img src="https://img.shields.io/github/license/jrandj/FPL-draft-picker" />
+    </a>
+</p>
+
 # FPL-draft-picker
 
 FPL-draft-picker is a Python application for finding available players in the selected league that have a higher 
@@ -17,9 +32,9 @@ The class structure is shown below:
 	</p>
 
 The diagrams have been using pyreverse:
-    ```bash
-    pyreverse -o png .
-    ```
+```bash
+pyreverse -o png .
+```
 
 ## Output
 
@@ -33,10 +48,10 @@ The output (sample available <a href="https://htmlpreview.github.io/?https://git
 ## Getting Started
 
 ### Pre-requisites
-* Python 3.8
+* Python 3.7
 
 ### Installation
-Use [pipenv](https://github.com/pypa/pipenv) to install FPL-draft-picker. Using the Windows Command Prompt:
+Use [pipenv](https://github.com/pypa/pipenv) to install FPL-draft-picker.
 
 1. Create the virtual environment:
     ```bash
