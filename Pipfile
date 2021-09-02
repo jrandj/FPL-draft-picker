@@ -25,4 +25,4 @@ webencodings = "==0.5.1"
 [dev-packages]
 
 [requires]
-python_version = "3.7"
+python_version = "3.9.7"
