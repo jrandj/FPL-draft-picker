@@ -82,8 +82,8 @@ class OfficialAPIData:
         for i in range(len(self.players['elements'])):
             self.players['elements'][i]['web_name_clean'] = self.players['elements'][i]['web_name'].translate(
                 str.maketrans({'í': 'i', 'ï': 'i', 'ß': 'ss', 'á': 'a', 'ä': 'a', 'é': 'e', 'ñ': 'n',
-                               'ć': 'c', 'š': 's', 'Ö': 'O', 'ö': 'o', 'ó': 'o', 'ø': 'o', 'ü': 'u',
-                               'ç': 'c', 'ú': 'u', 'Ü': 'U', 'ş': 's', 'ğ': 'g', 'ã': 'a'}))
+                               'ć': 'c', 'š': 's', 'Ö': 'O', 'Ø': 'O', 'ø': 'o', 'ö': 'o', 'ó': 'o', 'ü': 'u',
+                               'ç': 'c', 'ú': 'u', 'Ü': 'U', 'ş': 's', 'ğ': 'g', 'ã': 'a', 'Ñ': 'N'}))
             self.players['elements'][i]['selected'] = 'No'
             self.players['elements'][i]['available'] = 'No'
 
