@@ -79,7 +79,7 @@ class Draft:
         ------
 
         """
-        f = open("fpldraft-results-" + time.strftime("%Y%d%m-%H%M%S") + ".html", "w")
+        f = open("fpldraft-results-" + time.strftime("%Y%d%m-%H%M%S") + ".html", "w", encoding='utf-8')
         f.write(self.fixture.representation)
         f.write(self.team.candidates_representation)
         f.write(self.team.formations_representation)
