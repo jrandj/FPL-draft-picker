@@ -111,6 +111,6 @@ class ProjectionsData:
             self.sixGameProjections[0]['Name'].str.contains('Kiko Femenia') &
             self.sixGameProjections[0]['Team'].str.contains('WAT')] = 'Femenia'
         self.sixGameProjections[0]['Name'].loc[
-            self.sixGameProjections[0]['Name'].str.contains('Saul Níguez') &
+            self.sixGameProjections[0]['Name'].str.contains('Saul Niguez') &
             self.sixGameProjections[0]['Team'].str.contains('CHE')] = 'Saul'
         return
