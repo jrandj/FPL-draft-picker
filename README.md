@@ -31,7 +31,7 @@ The class structure is shown below:
 	<img src="/res/classes.png">
 	</p>
 
-The diagrams have been using pyreverse:
+The diagrams have been generated using pyreverse:
 ```bash
 pyreverse -o png .
 ```
