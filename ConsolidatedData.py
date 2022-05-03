@@ -52,7 +52,7 @@ class ConsolidatedData:
         self.projectionsData = ProjectionsData(self.fantasyFootballScoutUsername, self.fantasyFootballScoutPassword)
         self.teamID = self.get_teamID_from_teamName()
         self.add_candidates_to_players_based_on_projections()
-        self.nextGameWeek = self.projectionsData.sixGameProjections[0].columns.values[-8]
+        self.nextGameWeek = 'GW' + str(39-len(self.officialAPIData.players['fixtures'].keys()))
 
     @staticmethod
     def get_formations(team, nextGameWeekHeader):
@@ -137,12 +137,11 @@ class ConsolidatedData:
         """
         df = pd.DataFrame.from_dict(self.officialAPIData.players['elements'])
         sixGameProjection = self.projectionsData.sixGameProjections[0].columns.values[-2]
-        nextGameWeek = self.projectionsData.sixGameProjections[0].columns.values[-8]
-        nextGameWeekPlusOne = self.projectionsData.sixGameProjections[0].columns.values[-7]
-        nextGameWeekPlusTwo = self.projectionsData.sixGameProjections[0].columns.values[-6]
-        nextGameWeekPlusThree = self.projectionsData.sixGameProjections[0].columns.values[-5]
-        nextGameWeekPlusFour = self.projectionsData.sixGameProjections[0].columns.values[-4]
-        nextGameWeekPlusFive = self.projectionsData.sixGameProjections[0].columns.values[-3]
+        numberOfRemainingGameWeeks = len(self.officialAPIData.players['fixtures'].keys())
+        nextGameWeekName = 'GW' + str(39-len(self.officialAPIData.players['fixtures'].keys()))
+        GameWeekName = []
+        for i in range(0, numberOfRemainingGameWeeks):
+            GameWeekName.append(self.projectionsData.sixGameProjections[0].columns.values[-8+numberOfRemainingGameWeeks+i])
 
         # Left join fplPlayerData onto six game projections using a key of player name, team name and position name.
         # We need to drop duplicates because the projections data does not have additional data to ensure a 1:1 join.
@@ -157,21 +156,17 @@ class ConsolidatedData:
             candidates_this_gw = {}
             ict_index_candidates = {}
             self.officialAPIData.players['elements'][i][sixGameProjection] = d1[i][sixGameProjection]
-            self.officialAPIData.players['elements'][i][nextGameWeek] = d1[i][nextGameWeek]
-            self.officialAPIData.players['elements'][i][nextGameWeekPlusOne] = d1[i][nextGameWeekPlusOne]
-            self.officialAPIData.players['elements'][i][nextGameWeekPlusTwo] = d1[i][nextGameWeekPlusTwo]
-            self.officialAPIData.players['elements'][i][nextGameWeekPlusThree] = d1[i][nextGameWeekPlusThree]
-            self.officialAPIData.players['elements'][i][nextGameWeekPlusFour] = d1[i][nextGameWeekPlusFour]
-            self.officialAPIData.players['elements'][i][nextGameWeekPlusFive] = d1[i][nextGameWeekPlusFive]
+            for ii in range(0, numberOfRemainingGameWeeks):
+                self.officialAPIData.players['elements'][i][GameWeekName[ii]] = d1[i][GameWeekName[ii]]
             self.officialAPIData.players['elements'][i]['merge_status_six_game'] = d1[i]['merge_status_six_game']
             if d1[i]['selected'] == self.teamID:
                 for j in range(len(d1)):
                     if (d1[j][sixGameProjection] > d1[i][sixGameProjection]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
                             (d1[j]['selected'] == 'No') and (d1[j]['available'] == 'Yes'):
                         candidates[d1[j]['web_name']] = d1[j][sixGameProjection]
-                    if (d1[j][nextGameWeek] > d1[i][nextGameWeek]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
+                    if (d1[j][nextGameWeekName] > d1[i][nextGameWeekName]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
                             (d1[j]['selected'] == 'No') and (d1[j]['available'] == 'Yes'):
-                        candidates_this_gw[d1[j]['web_name']] = d1[j][nextGameWeek]
+                        candidates_this_gw[d1[j]['web_name']] = d1[j][nextGameWeekName]
                     if (float(d1[j]['ict_index']) > float(d1[i]['ict_index'])) and (d1[i]['Pos'] == d1[j]['Pos']) and \
                             (d1[j]['selected'] == 'No') and (d1[j]['available'] == 'Yes'):
                         ict_index_candidates[d1[j]['web_name']] = float(d1[j]['ict_index'])

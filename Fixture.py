@@ -42,7 +42,6 @@ class Fixture:
         """
         fixtures = []
         game_count = 0
-        nextGameWeekHeader = self.consolidatedData.projectionsData.sixGameProjections[0].columns.values[-8]
         for match in self.consolidatedData.officialAPIData.league['matches']:
             # assuming league size is 12
             if game_count < 6 and match['finished'] is False:
@@ -55,11 +54,11 @@ class Fixture:
                 fixture = {
                     "player_one": self.consolidatedData.officialAPIData.id_to_entry_name(match['league_entry_1']),
                     "player_one_score": self.consolidatedData.get_formations(player_one_players,
-                                                                             nextGameWeekHeader)[
+                                                                             self.consolidatedData.nextGameWeek)[
                         0]['Score'],
                     "player_two": self.consolidatedData.officialAPIData.id_to_entry_name(match['league_entry_2']),
                     "player_two_score": self.consolidatedData.get_formations(player_two_players,
-                                                                             nextGameWeekHeader)[
+                                                                             self.consolidatedData.nextGameWeek)[
                         0][
                         'Score']
                 }

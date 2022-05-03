@@ -94,7 +94,7 @@ class Team:
         player_index = 0
         total_points = 0
         current_formation = {'GKP': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
-        nextGameWeek = consolidatedData.projectionsData.sixGameProjections[0].columns.values[-8]
+        nextGameWeek = consolidatedData.nextGameWeek
         playersInTeam.sort(key=lambda x: (x['position_name'], -x[nextGameWeek]))
         for formation in formations:
             team_copy = playersInTeam.copy()
@@ -160,7 +160,7 @@ class Team:
         printListPoints = []
         printListIctIndex = []
         sixGameProjectionHeader = self.consolidatedData.projectionsData.sixGameProjections[0].columns.values[-2]
-        nextGameWeekHeader = self.consolidatedData.projectionsData.sixGameProjections[0].columns.values[-8]
+        nextGameWeekHeader = self.consolidatedData.nextGameWeek
 
         for i in self.playersInTeam:
             printDictPoints = OrderedDict((k, i[k]) for k in (
