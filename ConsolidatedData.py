@@ -52,7 +52,7 @@ class ConsolidatedData:
         self.projectionsData = ProjectionsData(self.fantasyFootballScoutUsername, self.fantasyFootballScoutPassword)
         self.teamID = self.get_teamID_from_teamName()
         self.add_candidates_to_players_based_on_projections()
-        self.nextGameWeek = 'GW' + str(39-len(self.officialAPIData.players['fixtures'].keys()))
+        self.nextGameWeek = 'GW' + str(39 - len(self.officialAPIData.players['fixtures'].keys()))
 
     @staticmethod
     def get_formations(team, nextGameWeekHeader):
@@ -138,10 +138,11 @@ class ConsolidatedData:
         df = pd.DataFrame.from_dict(self.officialAPIData.players['elements'])
         sixGameProjection = self.projectionsData.sixGameProjections[0].columns.values[-2]
         numberOfRemainingGameWeeks = len(self.officialAPIData.players['fixtures'].keys())
-        nextGameWeekName = 'GW' + str(39-len(self.officialAPIData.players['fixtures'].keys()))
+        nextGameWeekName = 'GW' + str(39 - len(self.officialAPIData.players['fixtures'].keys()))
         GameWeekName = []
         for i in range(0, numberOfRemainingGameWeeks):
-            GameWeekName.append(self.projectionsData.sixGameProjections[0].columns.values[-8+numberOfRemainingGameWeeks+i])
+            GameWeekName.append(
+                self.projectionsData.sixGameProjections[0].columns.values[-8 + numberOfRemainingGameWeeks + i])
 
         # Left join fplPlayerData onto six game projections using a key of player name, team name and position name.
         # We need to drop duplicates because the projections data does not have additional data to ensure a 1:1 join.
