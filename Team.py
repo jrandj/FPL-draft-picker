@@ -164,8 +164,9 @@ class Team:
 
         for i in self.playersInTeam:
             printDictPoints = OrderedDict((k, i[k]) for k in (
-                'web_name', 'team_name', 'position_name', sixGameProjectionHeader, nextGameWeekHeader, 'candidates',
-                'candidates_this_gw'))
+                'web_name', 'team_name', 'position_name', sixGameProjectionHeader, nextGameWeekHeader,
+                str(sixGameProjectionHeader + ' Candidates'),
+                str(nextGameWeekHeader + ' Pts Candidates')))
             printListPoints.append(printDictPoints)
             printDictIctIndex = OrderedDict(
                 (k, i[k]) for k in ('web_name', 'team_name', 'position_name', 'ict_index', 'ict_index_candidates'))

@@ -136,9 +136,9 @@ class ConsolidatedData:
 
         """
         df = pd.DataFrame.from_dict(self.officialAPIData.players['elements'])
-        sixGameProjection = self.projectionsData.sixGameProjections[0].columns.values[-2]
+        sixGameProjectionHeader = self.projectionsData.sixGameProjections[0].columns.values[-2]
         numberOfRemainingGameWeeks = len(self.officialAPIData.players['fixtures'].keys())
-        nextGameWeekName = 'GW' + str(39 - len(self.officialAPIData.players['fixtures'].keys()))
+        nextGameWeekName = 'GW' + str(39 - numberOfRemainingGameWeeks)
         GameWeekName = []
         for i in range(0, numberOfRemainingGameWeeks):
             GameWeekName.append(
@@ -156,15 +156,16 @@ class ConsolidatedData:
             candidates = {}
             candidates_this_gw = {}
             ict_index_candidates = {}
-            self.officialAPIData.players['elements'][i][sixGameProjection] = d1[i][sixGameProjection]
+            self.officialAPIData.players['elements'][i][sixGameProjectionHeader] = d1[i][sixGameProjectionHeader]
             for ii in range(0, numberOfRemainingGameWeeks):
                 self.officialAPIData.players['elements'][i][GameWeekName[ii]] = d1[i][GameWeekName[ii]]
             self.officialAPIData.players['elements'][i]['merge_status_six_game'] = d1[i]['merge_status_six_game']
             if d1[i]['selected'] == self.teamID:
                 for j in range(len(d1)):
-                    if (d1[j][sixGameProjection] > d1[i][sixGameProjection]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
+                    if (d1[j][sixGameProjectionHeader] > d1[i][sixGameProjectionHeader]) and (
+                            d1[i]['Pos'] == d1[j]['Pos']) and \
                             (d1[j]['selected'] == 'No') and (d1[j]['available'] == 'Yes'):
-                        candidates[d1[j]['web_name']] = d1[j][sixGameProjection]
+                        candidates[d1[j]['web_name']] = d1[j][sixGameProjectionHeader]
                     if (d1[j][nextGameWeekName] > d1[i][nextGameWeekName]) and (d1[i]['Pos'] == d1[j]['Pos']) and \
                             (d1[j]['selected'] == 'No') and (d1[j]['available'] == 'Yes'):
                         candidates_this_gw[d1[j]['web_name']] = d1[j][nextGameWeekName]
@@ -174,8 +175,10 @@ class ConsolidatedData:
                 sorted_candidates = sorted(candidates.items(), key=lambda x: x[1], reverse=True)
                 sorted_candidates_this_gw = sorted(candidates_this_gw.items(), key=lambda x: x[1], reverse=True)
                 ict_index_candidates = sorted(ict_index_candidates.items(), key=lambda x: x[1], reverse=True)
-                self.officialAPIData.players['elements'][i]['candidates'] = sorted_candidates
-                self.officialAPIData.players['elements'][i]['candidates_this_gw'] = sorted_candidates_this_gw
+                self.officialAPIData.players['elements'][i][
+                    str(sixGameProjectionHeader + ' Candidates')] = sorted_candidates
+                self.officialAPIData.players['elements'][i][
+                    str(nextGameWeekName + ' Pts Candidates')] = sorted_candidates_this_gw
                 self.officialAPIData.players['elements'][i]['ict_index_candidates'] = ict_index_candidates
         return
 
