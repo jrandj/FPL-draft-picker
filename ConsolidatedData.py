@@ -142,7 +142,7 @@ class ConsolidatedData:
         GameWeekName = []
         for i in range(0, numberOfRemainingGameWeeks):
             GameWeekName.append(
-                self.projectionsData.sixGameProjections[0].columns.values[-4 + i])
+                self.projectionsData.sixGameProjections[0].columns.values[-3 - i])
 
         # Left join fplPlayerData onto six game projections using a key of player name, team name and position name.
         # We need to drop duplicates because the projections data does not have additional data to ensure a 1:1 join.
