@@ -52,7 +52,7 @@ class ConsolidatedData:
         self.projectionsData = ProjectionsData(self.fantasyFootballScoutUsername, self.fantasyFootballScoutPassword)
         self.teamID = self.get_teamID_from_teamName()
         self.add_candidates_to_players_based_on_projections()
-        self.nextGameWeek = 'GW' + str(39 - len(self.officialAPIData.players['fixtures'].keys()))
+        self.nextGameWeek = 'GW' + str(self.officialAPIData.players['events']['next'])
 
     @staticmethod
     def get_formations(team, nextGameWeekHeader):
@@ -137,10 +137,19 @@ class ConsolidatedData:
         """
         df = pd.DataFrame.from_dict(self.officialAPIData.players['elements'])
         sixGameProjectionHeader = self.projectionsData.sixGameProjections[0].columns.values[-2]
-        numberOfRemainingGameWeeks = len(self.officialAPIData.players['fixtures'].keys())
-        nextGameWeekName = 'GW' + str(39 - numberOfRemainingGameWeeks)
+        numberOfRemainingGameWeeks = 39 - self.officialAPIData.players['events']['next']
+        nextGameWeekName = 'GW' + str(self.officialAPIData.players['events']['next'])
         GameWeekName = []
-        for i in range(0, numberOfRemainingGameWeeks):
+
+        # I will need to validate this behaviour in the last 6 GWs
+        # at GW37 there is only GW38 at position -3 (the columns shrink)
+        lower_bound = 6  # for e.g. at start of season -3 -5 is GW1
+        if numberOfRemainingGameWeeks < 5:
+            upper_bound = -3 - (5 - numberOfRemainingGameWeeks)
+        else:
+            upper_bound = 0  # for e.g. at start of season -3 is GW6
+
+        for i in range(upper_bound, lower_bound):
             GameWeekName.append(
                 self.projectionsData.sixGameProjections[0].columns.values[-3 - i])
 
@@ -157,7 +166,8 @@ class ConsolidatedData:
             candidates_this_gw = {}
             ict_index_candidates = {}
             self.officialAPIData.players['elements'][i][sixGameProjectionHeader] = d1[i][sixGameProjectionHeader]
-            for ii in range(0, numberOfRemainingGameWeeks):
+            # for ii in range(0, numberOfRemainingGameWeeks):
+            for ii in range(upper_bound, lower_bound):
                 self.officialAPIData.players['elements'][i][GameWeekName[ii]] = d1[i][GameWeekName[ii]]
             self.officialAPIData.players['elements'][i]['merge_status_six_game'] = d1[i]['merge_status_six_game']
             if d1[i]['selected'] == self.teamID:
