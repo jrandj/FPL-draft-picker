@@ -1,7 +1,7 @@
 language: python
 python:
-- '3.8'
+- '3.9.7'
 install:
 - pipenv install
 script:
-- python fpldraft.py -leagueID 3441 -teamName "randys11" -fantasyFootballScoutUsername $fantasyFootballScoutUsername -fantasyFootballScoutPassword $fantasyFootballScoutPassword
+- python fpldraft.py -leagueID 4784 -teamName "randys11" -fantasyFootballScoutUsername $fantasyFootballScoutUsername -fantasyFootballScoutPassword $fantasyFootballScoutPassword
