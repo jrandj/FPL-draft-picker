@@ -46,8 +46,6 @@ class ConsolidatedData:
         self.leagueID = leagueID
         self.fantasyFootballScoutUsername = fantasyFootballScoutUsername
         self.fantasyFootballScoutPassword = fantasyFootballScoutPassword
-        # OfficialAPIData.__init__(self, self.leagueID)
-        # ProjectionsData.__init__(self, self.fantasyFootballScoutUsername, self.fantasyFootballScoutPassword)
         self.officialAPIData = OfficialAPIData(self.leagueID)
         self.projectionsData = ProjectionsData(self.fantasyFootballScoutUsername, self.fantasyFootballScoutPassword)
         self.teamID = self.get_teamID_from_teamName()
@@ -153,8 +151,9 @@ class ConsolidatedData:
             GameWeekName.append(
                 self.projectionsData.sixGameProjections[0].columns.values[-3 - i])
 
-        # Left join fplPlayerData onto six game projections using a key of player name, team name and position name.
+        # Left join fplPlayerData onto six game projections using a key of player name, team name, and position name.
         # We need to drop duplicates because the projections data does not have additional data to ensure a 1:1 join.
+        # df.to_csv('players.csv')/self.projectionsData.sixGameProjections[0].to_csv('projections.csv') allow analysis
         df1 = df.merge(self.projectionsData.sixGameProjections[0], how='left',
                        left_on=['web_name_clean', 'team_name', 'position_name'],
                        right_on=['Name', 'Team', 'Pos'], indicator='merge_status_six_game').drop_duplicates(
@@ -166,7 +165,6 @@ class ConsolidatedData:
             candidates_this_gw = {}
             ict_index_candidates = {}
             self.officialAPIData.players['elements'][i][sixGameProjectionHeader] = d1[i][sixGameProjectionHeader]
-            # for ii in range(0, numberOfRemainingGameWeeks):
             for ii in range(upper_bound, lower_bound):
                 self.officialAPIData.players['elements'][i][GameWeekName[ii]] = d1[i][GameWeekName[ii]]
             self.officialAPIData.players['elements'][i]['merge_status_six_game'] = d1[i]['merge_status_six_game']

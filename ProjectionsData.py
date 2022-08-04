@@ -73,7 +73,8 @@ class ProjectionsData:
         return sixGameProjections, seasonProjections
 
     def align_six_game_projections_with_official(self):
-        """Align team names and player names from projectionsData.sixGameProjections to OfficialAPIData.players.
+        """Align team names and player names from projectionsData.sixGameProjections to OfficialAPIData.players. The
+        team name acronyms and other data details do not always align.
 
         Parameters
         ----------
@@ -90,27 +91,32 @@ class ProjectionsData:
             self.sixGameProjections[0]['Team'] == 'WHM'] = 'WHU'
         self.sixGameProjections[0]['Pos'].loc[
             self.sixGameProjections[0]['Pos'] == 'GK'] = 'GKP'
+        self.sixGameProjections[0]['Team'].loc[
+            self.sixGameProjections[0]['Team'] == 'NOT'] = 'NFO'
         self.sixGameProjections[0]['Name'].loc[
-            self.sixGameProjections[0]['Name'].str.contains('Buend<ed>a')] = 'Buendia'
-        self.sixGameProjections[0]['Name'].loc[
-            self.sixGameProjections[0]['Name'].str.contains('Femenia') &
-            self.sixGameProjections[0]['Team'].str.contains('WAT')] = 'Kiko Femenia'
+            self.sixGameProjections[0]['Name'].str.contains('Peri')
+            & self.sixGameProjections[0]['Team'].str.contains('TOT')
+            & self.sixGameProjections[0]['Pos'].str.contains('DEF')] = 'Perisic'
         self.sixGameProjections[0]['Name'].loc[
             self.sixGameProjections[0]['Name'].str.contains('Gomes') &
             self.sixGameProjections[0]['Team'].str.contains('EVE')] = 'Andre Gomes'
         self.sixGameProjections[0]['Name'].loc[
-            self.sixGameProjections[0]['Name'].str.contains('Sanchez') &
-            self.sixGameProjections[0]['Team'].str.contains('WHU')] = 'Carlos Sanchez'
+            self.sixGameProjections[0]['Name'].str.contains('Mari') &
+            self.sixGameProjections[0]['Team'].str.contains('ARS')] = 'Pablo Mari'
         self.sixGameProjections[0]['Name'].loc[
-            self.sixGameProjections[0]['Name'].str.contains('Rodriguez') &
-            self.sixGameProjections[0]['Team'].str.contains('EVE')] = 'James'
+            self.sixGameProjections[0]['Name'].str.contains('Doucoure') &
+            self.sixGameProjections[0]['Team'].str.contains('EVE')] = 'A.Doucoure'
         self.sixGameProjections[0]['Name'].loc[
-            self.sixGameProjections[0]['Name'].str.contains('Rodri') &
-            self.sixGameProjections[0]['Team'].str.contains('MCI')] = 'Rodrigo'
+            self.sixGameProjections[0]['Name'].str.contains('Jacob Ramsey') &
+            self.sixGameProjections[0]['Team'].str.contains('AVL')] = 'Ramsey'
         self.sixGameProjections[0]['Name'].loc[
-            self.sixGameProjections[0]['Name'].str.contains('Kiko Femenia') &
-            self.sixGameProjections[0]['Team'].str.contains('WAT')] = 'Femenia'
+            self.sixGameProjections[0]['Name'].str.contains('Sorensen') &
+            self.sixGameProjections[0]['Team'].str.contains('BRE')] = 'Bech'
         self.sixGameProjections[0]['Name'].loc[
-            self.sixGameProjections[0]['Name'].str.contains('Saul Niguez') &
-            self.sixGameProjections[0]['Team'].str.contains('CHE')] = 'Saul'
+            self.sixGameProjections[0]['Name'].str.contains('Traore') &
+            self.sixGameProjections[0]['Team'].str.contains('WOL')] = 'Adama'
+        self.sixGameProjections[0]['Name'].loc[
+            self.sixGameProjections[0]['Name'].str.contains('C.DoucourÃ©')] = 'C.Doucoure'
+        self.sixGameProjections[0]['Name'].loc[
+            self.sixGameProjections[0]['Name'].str.contains('MartÃ­nez')] = 'Martinez'
         return
