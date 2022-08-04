@@ -8,7 +8,7 @@
     <a href="https://img.shields.io/github/pipenv/locked/python-version/jrandj/FPL-draft-picker" alt="Python version">
         <img src="https://img.shields.io/github/pipenv/locked/python-version/jrandj/FPL-draft-picker" />
     </a>
-    <a href="https://img.shields.io/github/license/jrandj/FPL-draft-picker" alt="Python version">
+    <a href="https://img.shields.io/github/license/jrandj/FPL-draft-picker" alt="License">
         <img src="https://img.shields.io/github/license/jrandj/FPL-draft-picker" />
     </a>
 </p>
@@ -63,7 +63,7 @@ Use [pipenv](https://github.com/pypa/pipenv) to install FPL-draft-picker.
     pipenv shell
     ```
 
-To check for and update outdated packages run `pipenv update --outdated`. To uninstall run `pipenv uninstall`.
+To check for and update outdated packages run `pipenv update --outdated`. To uninstall run `pipenv --rm`.
    
 ### Usage
 Run the script from the command line:
