@@ -48,7 +48,7 @@ The output (sample available <a href="https://htmlpreview.github.io/?https://git
 ## Getting Started
 
 ### Pre-requisites
-* Python 3.9.7
+* Python 3.10.7
 
 ### Installation
 Use [pipenv](https://github.com/pypa/pipenv) to install FPL-draft-picker.
