@@ -123,8 +123,13 @@ class ProjectionsData:
             self.sixGameProjections[0]['Name'].str.contains('Sorensen') &
             self.sixGameProjections[0]['Team'].str.contains('BRE')] = 'Bech'
         self.sixGameProjections[0]['Name'].loc[
-            self.sixGameProjections[0]['Name'].str.contains('Traore') &
+            self.sixGameProjections[0]['Name'].str.contains('Traore \(Adama\)') &
+            self.sixGameProjections[0]['Pos'].str.contains('MID') &
             self.sixGameProjections[0]['Team'].str.contains('WOL')] = 'Adama'
+        self.sixGameProjections[0]['Name'].loc[
+            self.sixGameProjections[0]['Name'].str.contains('Traore \(Boubacar\)') &
+            self.sixGameProjections[0]['Pos'].str.contains('MID') &
+            self.sixGameProjections[0]['Team'].str.contains('WOL')] = 'Traore'
         self.sixGameProjections[0]['Name'].loc[
             self.sixGameProjections[0]['Name'].str.contains('C.Douco')] = 'C.Doucoure'
         self.sixGameProjections[0]['Name'].loc[
@@ -282,10 +287,6 @@ class ProjectionsData:
         self.sixGameProjections[0]['Name'].loc[
             self.sixGameProjections[0]['Name'].str.contains('Smith \(Jackson\)') &
             self.sixGameProjections[0]['Team'].str.contains('WOL')] = 'Smith'
-        self.sixGameProjections[0]['Name'].loc[
-            self.sixGameProjections[0]['Name'].str.contains('Trao') &
-            self.sixGameProjections[0]['Pos'].str.contains('MID') &
-            self.sixGameProjections[0]['Team'].str.contains('WOL')] = 'Traore'
         self.sixGameProjections[0]['Name'].loc[
             self.sixGameProjections[0]['Name'].str.contains('Kalaj') &
             self.sixGameProjections[0]['Pos'].str.contains('FWD') &
