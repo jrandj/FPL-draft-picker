@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "open sans", Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #8b4545;
+  color: #161313;
+  width: 100%;
+}
+
+h1 {
+  margin: 20px 0;
+  font-size: 50px;
+  text-align: center;
+  font-family: "saira condensed", "open sans", Arial, Helvetica, sans-serif;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.App {
+  margin: 0 auto;
+  width: 900px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: top;
+}
+
+.Pitch {
+  position: relative;
+  width: 540px;
+  height: 540px;
+  background: #2e7d32;
+  box-shadow: 0 3px 6px 1px rgba(0, 0, 0, 0.06);
+  perspective: 800px;
+  overflow: hidden;
+}
+
+.Pitch .Outlines {
+  position: absolute;
+  display: block;
+  transform-origin: bottom center;
+  transform: scale(1.41);
+  pointer-events: none;
+  bottom: -13%;
+  left: 5%;
+  width: 90%;
+  height: 76%;
+  user-select: none;
+}
+
+.Settings {
+  position: relative;
+  width: 340px;
+  height: 545px;
+}
+
+.Settings .Submit {
+  position: absolute;
+  width: 100%;
+  bottom: 5px;
+}
+
+.Settings .CTA {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin-top: 15px;
+  line-height: 56px;
+  text-align: center;
+  background: #fafafa;
+  border-radius: 3px;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.95);
+  cursor: pointer;
+  box-shadow: 0 3px 6px 1px rgba(0, 0, 0, 0.06);
+}
