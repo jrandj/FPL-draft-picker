@@ -24,6 +24,12 @@ export default class App extends React.Component {
     console.log("App.js teamName is: " + this.state.teamName);
   };
 
+  getPlayers = () => {
+    console.log("getPlayers()");
+    console.log("App.js League ID is: " + this.state.leagueID);
+    console.log("App.js teamName is: " + this.state.teamName);
+  };
+
   render() {
     return (
       <div id="app" className="App">
@@ -32,7 +38,11 @@ export default class App extends React.Component {
             setLeagueID={this.setLeagueID}
             setTeamName={this.setTeamName}
           />
-          <Submit />
+          <Submit
+            getPlayers={this.getPlayers}
+            // setLeagueID={this.setLeagueID}
+            // setTeamName={this.setTeamName}
+          />
         </div>
         <Pitch />
       </div>

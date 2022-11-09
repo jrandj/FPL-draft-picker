@@ -1,13 +1,23 @@
 import React from "react";
 
 export default class Submit extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
-    let getMyTeam = null;
-    getMyTeam = (
-      <a title="Get my Team" className="CTA">
-        Get my Team
-      </a>
+    const onClick = (event) => {
+      this.props.getPlayers();
+      //   this.props.setLeagueID("");
+      //   this.props.setTeamName("");
+    };
+
+    return (
+      <div className="Submit">
+        <button className="CTA" onClick={onClick}>
+          Get my Team
+        </button>
+      </div>
     );
-    return <div className="Submit">{getMyTeam}</div>;
   }
 }

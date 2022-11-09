@@ -41,8 +41,7 @@ class Draft:
         self.leagueID, self.teamName, self.fantasyFootballScoutUsername, self.fantasyFootballScoutPassword = \
             self.parse_input()
         self.consolidatedData = ConsolidatedData(self.fantasyFootballScoutUsername, self.fantasyFootballScoutPassword,
-                                                 self.teamName,
-                                                 self.leagueID)
+                                                 self.teamName, self.leagueID)
         self.fixture = Fixture(self.consolidatedData)
         self.team = Team(self.teamName, self.consolidatedData.teamID, self.consolidatedData)
 
