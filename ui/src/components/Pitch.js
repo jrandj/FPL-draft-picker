@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import pitchImage from "../data/pitch2.svg";
+import pitchImage from "../data/pitch.svg";
 
 export default class Pitch extends React.Component {
   render() {
