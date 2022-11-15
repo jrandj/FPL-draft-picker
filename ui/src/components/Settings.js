@@ -16,8 +16,8 @@ export default class Settings extends React.Component {
     };
     const onClick = () => {
       this.props.getPlayers();
-      this.leagueIDChangeHandlerRef.current.value = "";
-      this.teamNameChangeHandlerRef.current.value = "";
+      // this.leagueIDChangeHandlerRef.current.value = "";
+      // this.teamNameChangeHandlerRef.current.value = "";
     };
 
     return (
