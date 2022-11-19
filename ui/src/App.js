@@ -26,7 +26,6 @@ export default class App extends React.Component {
   };
 
   getPlayers = () => {
-    // console.log("getPlayers()");
     const detailsURL =
       "https://draft.premierleague.com/api/league/" +
       this.state.leagueID +
@@ -69,13 +68,23 @@ export default class App extends React.Component {
             console.log(
               "These are my players: " + JSON.stringify(this.state.players)
             );
+            this.state.players.forEach(function (arrayItem) {
+              console.log(JSON.stringify(arrayItem.web_name));
+            });
+            // console.log(
+            //   "These are my player names: " + JSON.stringify(this.state.players)
+            // );
             console.log(
-              "These are my temp: " +
-                JSON.stringify({
-                  ...this.state.playersByEntryID,
-                  ...res.data.elements,
-                })
+              "These are my elements: " +
+                JSON.stringify(this.state.playersByEntryID)
             );
+            // console.log(
+            //   "These are my temp: " +
+            //     JSON.stringify([
+            //       ...this.state.players,
+            //       ...this.state.playersByEntryID,
+            //     ])
+            // );
           }
         );
       })
