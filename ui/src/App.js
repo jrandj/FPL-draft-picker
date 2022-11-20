@@ -65,19 +65,19 @@ export default class App extends React.Component {
             }),
           },
           () => {
-            console.log(
-              "These are my players: " + JSON.stringify(this.state.players)
-            );
+            // console.log(
+            //   "These are my players: " + JSON.stringify(this.state.players)
+            // );
             this.state.players.forEach(function (arrayItem) {
               console.log(JSON.stringify(arrayItem.web_name));
             });
             // console.log(
             //   "These are my player names: " + JSON.stringify(this.state.players)
             // );
-            console.log(
-              "These are my elements: " +
-                JSON.stringify(this.state.playersByEntryID)
-            );
+            // console.log(
+            //   "These are my elements: " +
+            //     JSON.stringify(this.state.playersByEntryID)
+            // );
             // console.log(
             //   "These are my temp: " +
             //     JSON.stringify([
@@ -104,7 +104,7 @@ export default class App extends React.Component {
             getPlayers={this.getPlayers}
           />
         </div>
-        <Pitch />
+        <Pitch players={this.state.players} />
       </div>
     );
   }

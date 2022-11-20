@@ -3,29 +3,64 @@ import React from "react";
 import pitchImage from "../data/pitch.svg";
 
 export default class Pitch extends React.Component {
+  constructor(props) {
+    super(props);
+    console.log("this constructor " + JSON.stringify(this.props));
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.players != this.props.players) {
+      console.log(
+        "this componentDidUpdate prevPops: " +
+          JSON.stringify(prevProps) +
+          " this.props.players: " +
+          JSON.stringify(this.props.players) +
+          " this.props.prevState: " +
+          JSON.stringify(prevState)
+      );
+
+      console.log(
+        "keys: " +
+          JSON.stringify(
+            this.props.players
+              .filter((val) => val.element_type === 1)
+              .map(function (o) {
+                return o.web_name;
+              })
+          )
+      );
+    }
+  }
   render() {
     return (
       <div className="Pitch">
-        {/* <div className="Flexbox-Column-Container"> */}
         <img className="Outlines" src={pitchImage} alt="Pitch outlines" />
         <div className="Flexbox-Row-Container">
-          <div className="Flexbox-Row-Item">Goalkeeper</div>
+          {this.props.players
+            .filter((val) => val.element_type === 1)
+            .map(function (o) {
+              return <div className="Flexbox-Row-Item"> {o.web_name} </div>;
+            })}
         </div>
         <div className="Flexbox-Row-Container">
-          <div className="Flexbox-Row-Item">LB</div>
-          <div className="Flexbox-Row-Item">DC1</div>
-          <div className="Flexbox-Row-Item">DC2</div>
-          <div className="Flexbox-Row-Item">RB</div>
+          {this.props.players
+            .filter((val) => val.element_type === 2)
+            .map(function (o) {
+              return <div className="Flexbox-Row-Item"> {o.web_name} </div>;
+            })}
         </div>
         <div className="Flexbox-Row-Container">
-          <div className="Flexbox-Row-Item">MID1</div>
-          <div className="Flexbox-Row-Item">MID2</div>
-          <div className="Flexbox-Row-Item">MID3</div>
+          {this.props.players
+            .filter((val) => val.element_type === 3)
+            .map(function (o) {
+              return <div className="Flexbox-Row-Item"> {o.web_name} </div>;
+            })}
         </div>
         <div className="Flexbox-Row-Container">
-          <div className="Flexbox-Row-Item">FWD1</div>
-          <div className="Flexbox-Row-Item">FWD2</div>
-          <div className="Flexbox-Row-Item">FWD3</div>
+          {this.props.players
+            .filter((val) => val.element_type === 4)
+            .map(function (o) {
+              return <div className="Flexbox-Row-Item"> {o.web_name} </div>;
+            })}
         </div>
         <div className="Flexbox-Row-Container">
           <div className="Flexbox-Row-Item">SUB1</div>
