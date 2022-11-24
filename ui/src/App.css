@@ -97,6 +97,30 @@ h1 {
   cursor: pointer;
 }
 
+.Submit .Dropdown {
+  position: relative;
+  display: block;
+  width: 100%;
+  color: rgba(0, 0, 0, 0.95);
+  font-size: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* .Inputs .Submit {
+  position: relative;
+  display: block;
+  width: 100%;
+  background: #fafafa;
+  color: rgba(0, 0, 0, 0.95);
+  font-size: 20px;
+  line-height: 26px;
+  padding: 10px 60px;
+  border-radius: 5px;
+  margin-top: 15px;
+  cursor: pointer;
+} */
+
 .Flexbox-Row-Container {
   top: 10px;
   display: flex;
@@ -110,9 +134,9 @@ h1 {
 }
 
 .Flexbox-Row-Item {
-  width: 200px;
+  width: 100px;
   margin: 10px;
-  border: 3px solid#333;
+  /* border: 3px solid#333; */
   background-color: #dfdfdf;
   text-align: center;
 }

@@ -1,4 +1,7 @@
 import React from "react";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default class Settings extends React.Component {
   constructor(props) {
@@ -42,7 +45,18 @@ export default class Settings extends React.Component {
             autoFocus
           />
         </div>
+
         <div className="Submit">
+          <DropdownButton className="dropdown" title="Formation">
+            <Dropdown.Item href="#/action-1">5-3-2</Dropdown.Item>
+            <Dropdown.Item href="#/action-1">5-4-1</Dropdown.Item>
+            <Dropdown.Item href="#/action-1">5-2-3</Dropdown.Item>
+            <Dropdown.Item href="#/action-1">4-3-3</Dropdown.Item>
+            <Dropdown.Item href="#/action-1">4-5-1</Dropdown.Item>
+            <Dropdown.Item href="#/action-1">4-4-2</Dropdown.Item>
+            <Dropdown.Item href="#/action-1">3-5-2</Dropdown.Item>
+            <Dropdown.Item href="#/action-1">3-4-3</Dropdown.Item>
+          </DropdownButton>
           <button className="CTA" onClick={onClick}>
             Get my Team
           </button>

@@ -14,6 +14,7 @@ export default class App extends React.Component {
       leagueID: "",
       teamName: "",
       teamID: "",
+      formation: "442",
     };
   }
 
@@ -23,6 +24,23 @@ export default class App extends React.Component {
 
   setTeamName = (newTeamName) => {
     this.setState({ teamName: newTeamName });
+  };
+
+  addPlayersToFormation = () => {
+    this.newPlayers = this.state.players.map((v) => ({
+      ...v,
+      selected: false,
+    }));
+
+    console.log("test before: " + JSON.stringify(this.newPlayers));
+    this.setState(
+      {
+        players: this.newPlayers,
+      },
+      () => {
+        console.log("test after: " + JSON.stringify(this.state.players));
+      }
+    );
   };
 
   getPlayers = () => {
@@ -65,12 +83,21 @@ export default class App extends React.Component {
             }),
           },
           () => {
+            console.log(
+              "These are my players before: " +
+                JSON.stringify(this.state.players)
+            );
+            this.addPlayersToFormation();
+            console.log(
+              "These are my players after: " +
+                JSON.stringify(this.state.players)
+            );
             // console.log(
             //   "These are my players: " + JSON.stringify(this.state.players)
             // );
-            this.state.players.forEach(function (arrayItem) {
-              console.log(JSON.stringify(arrayItem.web_name));
-            });
+            // this.state.players.forEach(function (arrayItem) {
+            //   console.log(JSON.stringify(arrayItem.web_name));
+            // });
             // console.log(
             //   "These are my player names: " + JSON.stringify(this.state.players)
             // );

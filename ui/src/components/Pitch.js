@@ -7,29 +7,28 @@ export default class Pitch extends React.Component {
     super(props);
     console.log("this constructor " + JSON.stringify(this.props));
   }
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.players != this.props.players) {
-      console.log(
-        "this componentDidUpdate prevPops: " +
-          JSON.stringify(prevProps) +
-          " this.props.players: " +
-          JSON.stringify(this.props.players) +
-          " this.props.prevState: " +
-          JSON.stringify(prevState)
-      );
-
-      console.log(
-        "keys: " +
-          JSON.stringify(
-            this.props.players
-              .filter((val) => val.element_type === 1)
-              .map(function (o) {
-                return o.web_name;
-              })
-          )
-      );
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevProps.players != this.props.players) {
+  //     // console.log(
+  //     //   "this componentDidUpdate prevPops: " +
+  //     //     JSON.stringify(prevProps) +
+  //     //     " this.props.players: " +
+  //     //     JSON.stringify(this.props.players) +
+  //     //     " this.props.prevState: " +
+  //     //     JSON.stringify(prevState)
+  //     // );
+  //     // console.log(
+  //     //   "keys: " +
+  //     //     JSON.stringify(
+  //     //       this.props.players
+  //     //         .filter((val) => val.element_type === 1)
+  //     //         .map(function (o) {
+  //     //           return o.web_name;
+  //     //         })
+  //     //     )
+  //     // );
+  //   }
+  // }
   render() {
     return (
       <div className="Pitch">
