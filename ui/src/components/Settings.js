@@ -8,8 +8,14 @@ export default class Settings extends React.Component {
     super(props);
     this.leagueIDChangeHandlerRef = React.createRef();
     this.teamNameChangeHandlerRef = React.createRef();
+    this.formationChangeHandlerRef = React.createRef();
+    console.log("Create with this.props: " + JSON.stringify(this.props));
   }
-
+  componentDidUpdate(prevProps) {
+    console.log("Component did update");
+    console.log("this.props: " + JSON.stringify(this.props));
+    console.log("prevProps: " + JSON.stringify(prevProps));
+  }
   render() {
     const leagueIDChangeHandler = (event) => {
       this.props.setLeagueID(event.target.value);
@@ -17,10 +23,14 @@ export default class Settings extends React.Component {
     const teamNameChangeHandler = (event) => {
       this.props.setTeamName(event.target.value);
     };
-    const onClick = () => {
+    const onGetMyTeam = () => {
       this.props.getPlayers();
       // this.leagueIDChangeHandlerRef.current.value = "";
       // this.teamNameChangeHandlerRef.current.value = "";
+    };
+    const onSetFormation = (event) => {
+      console.log("event is " + event);
+      this.props.setFormation(event);
     };
 
     return (
@@ -47,17 +57,22 @@ export default class Settings extends React.Component {
         </div>
 
         <div className="Submit">
-          <DropdownButton className="dropdown" title="Formation">
-            <Dropdown.Item href="#/action-1">5-3-2</Dropdown.Item>
-            <Dropdown.Item href="#/action-1">5-4-1</Dropdown.Item>
-            <Dropdown.Item href="#/action-1">5-2-3</Dropdown.Item>
-            <Dropdown.Item href="#/action-1">4-3-3</Dropdown.Item>
-            <Dropdown.Item href="#/action-1">4-5-1</Dropdown.Item>
-            <Dropdown.Item href="#/action-1">4-4-2</Dropdown.Item>
-            <Dropdown.Item href="#/action-1">3-5-2</Dropdown.Item>
-            <Dropdown.Item href="#/action-1">3-4-3</Dropdown.Item>
+          <DropdownButton
+            className="Dropdown"
+            onSelect={onSetFormation}
+            title={`Formation: ${this.props.formation}`}
+            // key={`${this.props.formation}`}
+            // ref={this.formationChangeHandlerRef}
+          >
+            <Dropdown.Item eventKey="343">3-4-3</Dropdown.Item>
+            <Dropdown.Item eventKey="352">3-5-2</Dropdown.Item>
+            <Dropdown.Item eventKey="532">5-3-2</Dropdown.Item>
+            <Dropdown.Item eventKey="541">5-4-1</Dropdown.Item>
+            <Dropdown.Item eventKey="433">4-3-3</Dropdown.Item>
+            <Dropdown.Item eventKey="442">4-4-2</Dropdown.Item>
+            <Dropdown.Item eventKey="451">4-5-1</Dropdown.Item>
           </DropdownButton>
-          <button className="CTA" onClick={onClick}>
+          <button className="CTA" onClick={onGetMyTeam}>
             Get my Team
           </button>
         </div>

@@ -68,7 +68,7 @@ h1 {
   bottom: 5px;
 }
 
-.Settings .CTA {
+/* .Settings .CTA {
   position: relative;
   display: block;
   width: 100%;
@@ -81,7 +81,7 @@ h1 {
   color: rgba(0, 0, 0, 0.95);
   cursor: pointer;
   box-shadow: 0 3px 6px 1px rgba(0, 0, 0, 0.06);
-}
+} */
 
 .Submit .CTA {
   position: relative;
@@ -97,15 +97,15 @@ h1 {
   cursor: pointer;
 }
 
-.Submit .Dropdown {
+/* .Submit .Dropdown {
   position: relative;
   display: block;
-  width: 100%;
+  width: 30%;
   color: rgba(0, 0, 0, 0.95);
   font-size: 20px;
   border-radius: 5px;
   cursor: pointer;
-}
+} */
 
 /* .Inputs .Submit {
   position: relative;
@@ -139,6 +139,16 @@ h1 {
   /* border: 3px solid#333; */
   background-color: #dfdfdf;
   text-align: center;
+}
+
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:visited {
+  background-color: #fafafa !important;
+  color: rgba(0, 0, 0, 0.95) !important;
+  border-color: rgba(0, 0, 0, 0.95) !important;
+  line-height: 26px !important;
 }
 
 /* .Flexbox-Item-1 {

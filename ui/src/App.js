@@ -26,12 +26,17 @@ export default class App extends React.Component {
     this.setState({ teamName: newTeamName });
   };
 
+  setFormation = (newFormation) => {
+    this.setState({ formation: newFormation }, () => {
+      console.log("formation is now: " + this.state.formation);
+    });
+  };
+
   addPlayersToFormation = () => {
     this.newPlayers = this.state.players.map((v) => ({
       ...v,
       selected: false,
     }));
-
     console.log("test before: " + JSON.stringify(this.newPlayers));
     this.setState(
       {
@@ -128,7 +133,9 @@ export default class App extends React.Component {
           <Settings
             setLeagueID={this.setLeagueID}
             setTeamName={this.setTeamName}
+            setFormation={this.setFormation}
             getPlayers={this.getPlayers}
+            formation={this.state.formation}
           />
         </div>
         <Pitch players={this.state.players} />
