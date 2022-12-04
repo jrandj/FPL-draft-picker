@@ -28,7 +28,7 @@ export default class App extends React.Component {
 
   setFormation = (newFormation) => {
     this.setState({ formation: newFormation }, () => {
-      console.log("formation is now: " + this.state.formation);
+      this.addPlayersToFormation();
     });
   };
 
@@ -37,13 +37,42 @@ export default class App extends React.Component {
       ...v,
       selected: false,
     }));
-    console.log("test before: " + JSON.stringify(this.newPlayers));
+
+    var goalkeepers = this.newPlayers
+      .filter((obj) => obj.element_type === 1)
+      .sort((a, b) => b.ict_index - a.ict_index)
+      .slice(0, 1);
+
+    var defenders = this.newPlayers
+      .filter((obj) => obj.element_type === 2)
+      .sort((a, b) => b.ict_index - a.ict_index)
+      .slice(0, parseInt(this.state.formation.charAt(0)));
+
+    var midfielders = this.newPlayers
+      .filter((obj) => obj.element_type === 3)
+      .sort((a, b) => b.ict_index - a.ict_index)
+      .slice(0, parseInt(this.state.formation.charAt(1)));
+
+    var attackers = this.newPlayers
+      .filter((obj) => obj.element_type === 4)
+      .sort((a, b) => b.ict_index - a.ict_index)
+      .slice(0, parseInt(this.state.formation.charAt(2)));
+
+    const selected = goalkeepers.concat(defenders, midfielders, attackers);
+
+    this.newPlayers.forEach((obj) => {
+      let player = selected.find((ee) => ee.id === obj.id);
+      if (player) {
+        obj.selected = true;
+      }
+    });
+
     this.setState(
       {
         players: this.newPlayers,
       },
       () => {
-        console.log("test after: " + JSON.stringify(this.state.players));
+        // console.log("State is now: " + JSON.stringify(this.state.players));
       }
     );
   };
@@ -84,46 +113,14 @@ export default class App extends React.Component {
               return this.state.playersByEntryID.some((f) => {
                 return f.element === el.id;
               });
-              // return f.userid === el.userid && f.projectid === el.projectid;
             }),
           },
           () => {
-            console.log(
-              "These are my players before: " +
-                JSON.stringify(this.state.players)
-            );
             this.addPlayersToFormation();
-            console.log(
-              "These are my players after: " +
-                JSON.stringify(this.state.players)
-            );
-            // console.log(
-            //   "These are my players: " + JSON.stringify(this.state.players)
-            // );
-            // this.state.players.forEach(function (arrayItem) {
-            //   console.log(JSON.stringify(arrayItem.web_name));
-            // });
-            // console.log(
-            //   "These are my player names: " + JSON.stringify(this.state.players)
-            // );
-            // console.log(
-            //   "These are my elements: " +
-            //     JSON.stringify(this.state.playersByEntryID)
-            // );
-            // console.log(
-            //   "These are my temp: " +
-            //     JSON.stringify([
-            //       ...this.state.players,
-            //       ...this.state.playersByEntryID,
-            //     ])
-            // );
           }
         );
       })
       .catch((error) => console.log(error.response));
-
-    console.log("App.js League ID is: " + this.state.leagueID);
-    console.log("App.js teamName is: " + this.state.teamName);
   };
 
   render() {

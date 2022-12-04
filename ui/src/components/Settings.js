@@ -8,13 +8,6 @@ export default class Settings extends React.Component {
     super(props);
     this.leagueIDChangeHandlerRef = React.createRef();
     this.teamNameChangeHandlerRef = React.createRef();
-    this.formationChangeHandlerRef = React.createRef();
-    console.log("Create with this.props: " + JSON.stringify(this.props));
-  }
-  componentDidUpdate(prevProps) {
-    console.log("Component did update");
-    console.log("this.props: " + JSON.stringify(this.props));
-    console.log("prevProps: " + JSON.stringify(prevProps));
   }
   render() {
     const leagueIDChangeHandler = (event) => {
@@ -29,7 +22,6 @@ export default class Settings extends React.Component {
       // this.teamNameChangeHandlerRef.current.value = "";
     };
     const onSetFormation = (event) => {
-      console.log("event is " + event);
       this.props.setFormation(event);
     };
 
@@ -61,8 +53,6 @@ export default class Settings extends React.Component {
             className="Dropdown"
             onSelect={onSetFormation}
             title={`Formation: ${this.props.formation}`}
-            // key={`${this.props.formation}`}
-            // ref={this.formationChangeHandlerRef}
           >
             <Dropdown.Item eventKey="343">3-4-3</Dropdown.Item>
             <Dropdown.Item eventKey="352">3-5-2</Dropdown.Item>
