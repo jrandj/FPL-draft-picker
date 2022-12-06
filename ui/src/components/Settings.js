@@ -54,15 +54,14 @@ export default class Settings extends React.Component {
             onSelect={onSetFormation}
             title={`Formation: ${this.props.formation}`}
           >
-            <Dropdown.Item eventKey="343">3-4-3</Dropdown.Item>
-            <Dropdown.Item eventKey="352">3-5-2</Dropdown.Item>
-            <Dropdown.Item eventKey="532">5-3-2</Dropdown.Item>
-            <Dropdown.Item eventKey="541">5-4-1</Dropdown.Item>
-            <Dropdown.Item eventKey="433">4-3-3</Dropdown.Item>
-            <Dropdown.Item eventKey="442">4-4-2</Dropdown.Item>
-            <Dropdown.Item eventKey="451">4-5-1</Dropdown.Item>
+            {this.props.formations.map((e) => (
+              <Dropdown.Item eventKey={e}>{e}</Dropdown.Item>
+            ))}
           </DropdownButton>
-          <button className="CTA" onClick={onGetMyTeam}>
+          <button className="PimpMyTeam" onClick={onGetMyTeam}>
+            Pimp my Team
+          </button>
+          <button className="GetMyTeam" onClick={onGetMyTeam}>
             Get my Team
           </button>
         </div>

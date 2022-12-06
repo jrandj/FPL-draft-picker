@@ -15,6 +15,7 @@ export default class App extends React.Component {
       teamName: "",
       teamID: "",
       formation: "442",
+      formations: ["343", "352", "532", "541", "433", "442", "451"],
     };
   }
 
@@ -30,6 +31,11 @@ export default class App extends React.Component {
     this.setState({ formation: newFormation }, () => {
       this.addPlayersToFormation();
     });
+  };
+
+  findBestFormationOnLoad = () => {
+    // iterate through formations and find total ICT index of selected players
+    // set the formation with the highest score as the selected formation
   };
 
   addPlayersToFormation = () => {
@@ -133,6 +139,7 @@ export default class App extends React.Component {
             setFormation={this.setFormation}
             getPlayers={this.getPlayers}
             formation={this.state.formation}
+            formations={this.state.formations}
           />
         </div>
         <Pitch players={this.state.players} />
