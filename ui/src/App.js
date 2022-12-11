@@ -33,91 +33,6 @@ export default class App extends React.Component {
     });
   };
 
-  findBestFormationOnLoad = () => {
-    // iterate through formations and find total ICT index of selected players
-    // set the formation with the highest score as the selected formation
-    // OR more optimal way? pick 331 and keep adding highest rated player (but you'll need to backtrack?)
-
-    this.newPlayers = this.state.players.map((v) => ({
-      ...v,
-      selected: false,
-    }));
-
-    // console.log("this.state.players is: " + JSON.stringify(this.state.players));
-
-    var goalkeepers = this.newPlayers
-      .filter((obj) => obj.element_type === 1)
-      .sort((a, b) => b.ict_index - a.ict_index)
-      .slice(0, 1);
-
-    var defenders = this.newPlayers
-      .filter((obj) => obj.element_type === 2)
-      .sort((a, b) => b.ict_index - a.ict_index)
-      .slice(0, 3);
-
-    var midfielders = this.newPlayers
-      .filter((obj) => obj.element_type === 3)
-      .sort((a, b) => b.ict_index - a.ict_index)
-      .slice(0, 3);
-
-    var attackers = this.newPlayers
-      .filter((obj) => obj.element_type === 4)
-      .sort((a, b) => b.ict_index - a.ict_index)
-      .slice(0, 1);
-
-    let selected = goalkeepers.concat(defenders, midfielders, attackers);
-
-    // console.log("Selected is: " + JSON.stringify(selected));
-
-    // choose the skeleton team based on ICT index
-    this.newPlayers.forEach((obj) => {
-      let player = selected.find((ee) => ee.id === obj.id);
-      if (player) {
-        obj.selected = true;
-      }
-    });
-
-    // choose "the rest" of the team (need 3 more outfield players who aren't already selected)
-    var theRest = this.newPlayers
-      .filter((obj) => obj.selected === false && obj.element_type !== 1)
-      .sort((a, b) => b.ict_index - a.ict_index)
-      .slice(0, 3);
-
-    selected = selected.concat(theRest);
-
-    this.newPlayers.forEach((obj) => {
-      let player = selected.find((ee) => ee.id === obj.id);
-      if (player) {
-        obj.selected = true;
-      }
-    });
-
-    // console.log("newPlayers is: " + JSON.stringify(this.newPlayers));
-
-    const newFormation =
-      String(
-        this.newPlayers.filter(
-          (obj) => obj.selected === true && obj.element_type == 2
-        ).length
-      ) +
-      String(
-        this.newPlayers.filter(
-          (obj) => obj.selected === true && obj.element_type == 3
-        ).length
-      ) +
-      String(
-        this.newPlayers.filter(
-          (obj) => obj.selected === true && obj.element_type == 4
-        ).length
-      );
-    // console.log("newPlayers is: " + newFormation);
-
-    this.setState({
-      players: this.newPlayers,
-      formation: newFormation,
-    });
-  };
-
   addPlayersToFormation = () => {
     this.newPlayers = this.state.players.map((v) => ({
       ...v,
@@ -163,6 +78,80 @@ export default class App extends React.Component {
     );
   };
 
+  findBestFormationOnLoad = () => {
+    this.newPlayers = this.state.players.map((v) => ({
+      ...v,
+      selected: false,
+    }));
+
+    var goalkeepers = this.newPlayers
+      .filter((obj) => obj.element_type === 1)
+      .sort((a, b) => b.ict_index - a.ict_index)
+      .slice(0, 1);
+
+    var defenders = this.newPlayers
+      .filter((obj) => obj.element_type === 2)
+      .sort((a, b) => b.ict_index - a.ict_index)
+      .slice(0, 3);
+
+    var midfielders = this.newPlayers
+      .filter((obj) => obj.element_type === 3)
+      .sort((a, b) => b.ict_index - a.ict_index)
+      .slice(0, 3);
+
+    var attackers = this.newPlayers
+      .filter((obj) => obj.element_type === 4)
+      .sort((a, b) => b.ict_index - a.ict_index)
+      .slice(0, 1);
+
+    let selected = goalkeepers.concat(defenders, midfielders, attackers);
+
+    // choose the skeleton team based on ICT index
+    this.newPlayers.forEach((obj) => {
+      let player = selected.find((ee) => ee.id === obj.id);
+      if (player) {
+        obj.selected = true;
+      }
+    });
+
+    // choose "the rest" of the team (need 3 more outfield players who aren't already selected)
+    var theRest = this.newPlayers
+      .filter((obj) => obj.selected === false && obj.element_type !== 1)
+      .sort((a, b) => b.ict_index - a.ict_index)
+      .slice(0, 3);
+
+    selected = selected.concat(theRest);
+
+    this.newPlayers.forEach((obj) => {
+      let player = selected.find((ee) => ee.id === obj.id);
+      if (player) {
+        obj.selected = true;
+      }
+    });
+
+    const newFormation =
+      String(
+        this.newPlayers.filter(
+          (obj) => obj.selected === true && obj.element_type === 2
+        ).length
+      ) +
+      String(
+        this.newPlayers.filter(
+          (obj) => obj.selected === true && obj.element_type === 3
+        ).length
+      ) +
+      String(
+        this.newPlayers.filter(
+          (obj) => obj.selected === true && obj.element_type === 4
+        ).length
+      );
+
+    this.setState({
+      players: this.newPlayers,
+      formation: newFormation,
+    });
+  };
+
   getPlayers = () => {
     const detailsURL =
       "https://draft.premierleague.com/api/league/" +
@@ -202,7 +191,6 @@ export default class App extends React.Component {
             }),
           },
           () => {
-            // this.addPlayersToFormation();
             this.findBestFormationOnLoad();
           }
         );

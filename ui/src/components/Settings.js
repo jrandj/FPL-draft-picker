@@ -55,7 +55,9 @@ export default class Settings extends React.Component {
             title={`Formation: ${this.props.formation}`}
           >
             {this.props.formations.map((e) => (
-              <Dropdown.Item eventKey={e}>{e}</Dropdown.Item>
+              <Dropdown.Item key={e} eventKey={e}>
+                {e}
+              </Dropdown.Item>
             ))}
           </DropdownButton>
           <button className="PimpMyTeam" onClick={onGetMyTeam}>
