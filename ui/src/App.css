@@ -43,6 +43,12 @@ h1 {
   flex-direction: column;
 }
 
+.Pitch .Bench-Banner {
+  background: rgba(114, 207, 159, 0.9);
+  padding-top: 10;
+  z-index: 3;
+}
+
 .Pitch .Outlines {
   position: absolute;
   display: block;
@@ -54,6 +60,7 @@ h1 {
   width: 90%;
   height: 76%;
   user-select: none;
+  z-index: 1;
 }
 
 .Settings {
@@ -99,13 +106,13 @@ h1 {
 }
 
 .Flexbox-Row-Container {
-  top: 10px;
+  /* top: 10px; */
   display: flex;
   justify-content: space-around;
   align-items: center;
   flex-direction: row;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   flex-grow: 1;
   flex-wrap: nowrap;
 }

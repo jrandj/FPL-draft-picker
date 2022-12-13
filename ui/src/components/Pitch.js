@@ -56,43 +56,45 @@ export default class Pitch extends React.Component {
               );
             })}
         </div>
-        <div className="Flexbox-Row-Container">
-          {this.props.players
-            .filter((val) => val.element_type === 1 && val.selected === false)
-            .map(function (o) {
-              return (
-                <div className="Flexbox-Row-Item" key={o.id}>
-                  <PlayerCard player={o} />
-                </div>
-              );
-            })}
-          {this.props.players
-            .filter((val) => val.element_type === 2 && val.selected === false)
-            .map(function (o) {
-              return (
-                <div className="Flexbox-Row-Item" key={o.id}>
-                  <PlayerCard player={o} />
-                </div>
-              );
-            })}
-          {this.props.players
-            .filter((val) => val.element_type === 3 && val.selected === false)
-            .map(function (o) {
-              return (
-                <div className="Flexbox-Row-Item" key={o.id}>
-                  <PlayerCard player={o} />
-                </div>
-              );
-            })}
-          {this.props.players
-            .filter((val) => val.element_type === 4 && val.selected === false)
-            .map(function (o) {
-              return (
-                <div className="Flexbox-Row-Item" key={o.id}>
-                  <PlayerCard player={o} />
-                </div>
-              );
-            })}
+        <div className="Bench-Banner">
+          <div className="Flexbox-Row-Container" style={{ paddingBottom: 10 }}>
+            {this.props.players
+              .filter((val) => val.element_type === 1 && val.selected === false)
+              .map(function (o) {
+                return (
+                  <div className="Flexbox-Row-Item" key={o.id}>
+                    <PlayerCard player={o} />
+                  </div>
+                );
+              })}
+            {this.props.players
+              .filter((val) => val.element_type === 2 && val.selected === false)
+              .map(function (o) {
+                return (
+                  <div className="Flexbox-Row-Item" key={o.id}>
+                    <PlayerCard player={o} />
+                  </div>
+                );
+              })}
+            {this.props.players
+              .filter((val) => val.element_type === 3 && val.selected === false)
+              .map(function (o) {
+                return (
+                  <div className="Flexbox-Row-Item" key={o.id}>
+                    <PlayerCard player={o} />
+                  </div>
+                );
+              })}
+            {this.props.players
+              .filter((val) => val.element_type === 4 && val.selected === false)
+              .map(function (o) {
+                return (
+                  <div className="Flexbox-Row-Item" key={o.id}>
+                    <PlayerCard player={o} />
+                  </div>
+                );
+              })}
+          </div>
         </div>
       </div>
     );
