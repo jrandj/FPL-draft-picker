@@ -69,7 +69,7 @@ class ConsolidatedData:
         """
         formations = [{'GKP': 1, 'DEF': 5, 'MID': 3, 'FWD': 2, 'Score': 0},
                       {'GKP': 1, 'DEF': 5, 'MID': 4, 'FWD': 1, 'Score': 0},
-                      {'GKP': 1, 'DEF': 5, 'MID': 2, 'FWD': 3, 'Score': 0},
+                      # {'GKP': 1, 'DEF': 5, 'MID': 2, 'FWD': 3, 'Score': 0},
                       {'GKP': 1, 'DEF': 4, 'MID': 3, 'FWD': 3, 'Score': 0},
                       {'GKP': 1, 'DEF': 4, 'MID': 5, 'FWD': 1, 'Score': 0},
                       {'GKP': 1, 'DEF': 4, 'MID': 4, 'FWD': 2, 'Score': 0},
@@ -148,8 +148,7 @@ class ConsolidatedData:
             upper_bound = 0  # for e.g. at start of season -3 is GW6
 
         for i in range(upper_bound, lower_bound):
-            GameWeekName.append(
-                self.projectionsData.sixGameProjections[0].columns.values[-3 - i])
+            GameWeekName.append(self.projectionsData.sixGameProjections[0].columns.values[-3 - i])
 
         # Left join fplPlayerData onto six game projections using a key of player name, team name, and position name.
         # We need to drop duplicates because the projections data does not have additional data to ensure a 1:1 join.
