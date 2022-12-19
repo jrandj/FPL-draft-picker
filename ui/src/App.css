@@ -75,7 +75,7 @@ h1 {
   bottom: 5px;
 }
 
-.Settings .Submit .PimpMyTeam {
+/* .Settings .Submit .PimpMyTeam {
   position: relative;
   width: 100%;
   background: #fafafa;
@@ -88,7 +88,7 @@ h1 {
   cursor: pointer;
   vertical-align: right;
   display: inline-block;
-}
+} */
 
 .Settings .Submit .GetMyTeam {
   position: relative;
@@ -135,4 +135,17 @@ h1 {
 
 .PlayerCard {
   border-style: solid;
+}
+
+.Settings .Result-player:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.Settings .Candidates {
+  background: #fafafa;
+  margin-top: 5px;
+  max-height: 330px;
+  overflow-y: scroll;
+  border-radius: 3px;
+  color: rgba(0, 0, 0, 0.95);
 }

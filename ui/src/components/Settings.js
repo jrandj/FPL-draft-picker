@@ -1,6 +1,7 @@
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import Candidate from "./Candidate";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default class Settings extends React.Component {
@@ -8,6 +9,9 @@ export default class Settings extends React.Component {
     super(props);
     this.leagueIDChangeHandlerRef = React.createRef();
     this.teamNameChangeHandlerRef = React.createRef();
+    // this.state = {
+    //   selectedPlayer: "",
+    // };
   }
   render() {
     const leagueIDChangeHandler = (event) => {
@@ -47,7 +51,36 @@ export default class Settings extends React.Component {
             autoFocus
           />
         </div>
-
+        <p
+          style={{
+            margin: 0,
+            padding: 0,
+            fontWeight: "bold",
+          }}
+        >
+          Candidates (shown on player selection)
+        </p>
+        <div className="Candidates">
+          {this.props.selectedPlayer &&
+            (console.log("players: " + JSON.stringify(this.props.myPlayers)),
+            this.props.selectedPlayer.candidates.map((player) => (
+              <Candidate player={player}></Candidate>
+            )))}
+        </div>
+        {/* {this.props.selectedPlayers.length < 11 &&
+            this.state.value !== "" &&
+            this.props.results.map((player) => (
+              // Create result list from search results
+              <SearchResult
+                player={player}
+                selectPlayer={this.props.selectPlayer}
+                updateValue={this.updateValue}
+                key={`Result${player.id}`}
+                lastPlayerToAdd={this.props.selectedPlayers.length === 10}
+                logoPlaceholder={this.props.logoPlaceholder}
+                portraitPlaceholder={this.props.portraitPlaceholder}
+              />
+            ))} */}
         <div className="Submit">
           <DropdownButton
             className="Dropdown"
@@ -60,9 +93,9 @@ export default class Settings extends React.Component {
               </Dropdown.Item>
             ))}
           </DropdownButton>
-          <button className="PimpMyTeam" onClick={onGetMyTeam}>
+          {/* <button className="PimpMyTeam" onClick={onGetMyTeam}>
             Pimp my Team
-          </button>
+          </button> */}
           <button className="GetMyTeam" onClick={onGetMyTeam}>
             Get my Team
           </button>

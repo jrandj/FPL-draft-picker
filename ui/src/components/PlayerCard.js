@@ -2,15 +2,16 @@ import React from "react";
 import playerImagePlaceholder from "../data/player.svg";
 
 export default class PlayerCard extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  // }
-
   render() {
+    const setSelectedPlayer = (event) => {
+      // console.log("Receiving event at PlayerCard: " + JSON.stringify(event));
+      this.props.setSelectedPlayer(event);
+    };
     return (
-      <div className="PlayerCard">
-        {/* {console.log("props receiving " + JSON.stringify(this.props))} */}
-        {console.log("player receiving " + JSON.stringify(this.props.player))}
+      <div
+        className="PlayerCard"
+        onClick={() => setSelectedPlayer(this.props.player)}
+      >
         <img
           src={playerImagePlaceholder}
           alt="Player"
