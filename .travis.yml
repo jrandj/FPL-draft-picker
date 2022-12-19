@@ -3,5 +3,7 @@ python:
 - '3.9.7'
 install:
 - pipenv install
+before_script:
+  - cd app
 script:
 - python fpldraft.py -leagueID 4784 -teamName "randys11" -fantasyFootballScoutUsername $fantasyFootballScoutUsername -fantasyFootballScoutPassword $fantasyFootballScoutPassword
