@@ -87,28 +87,28 @@ export default class App extends React.Component {
     );
   };
 
-  findBestFormationOnLoad = () => {
-    this.newPlayers = this.state.myPlayers.map((v) => ({
+  findBestFormationOnLoad = (myPlayers) => {
+    let newPlayers = myPlayers.map((v) => ({
       ...v,
       selected: false,
     }));
 
-    var goalkeepers = this.newPlayers
+    var goalkeepers = newPlayers
       .filter((obj) => obj.element_type === 1)
       .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, 1);
 
-    var defenders = this.newPlayers
+    var defenders = newPlayers
       .filter((obj) => obj.element_type === 2)
       .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, 3);
 
-    var midfielders = this.newPlayers
+    var midfielders = newPlayers
       .filter((obj) => obj.element_type === 3)
       .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, 3);
 
-    var attackers = this.newPlayers
+    var attackers = newPlayers
       .filter((obj) => obj.element_type === 4)
       .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, 1);
@@ -116,7 +116,7 @@ export default class App extends React.Component {
     let selected = goalkeepers.concat(defenders, midfielders, attackers);
 
     // choose the skeleton team based on ICT index
-    this.newPlayers.forEach((obj) => {
+    newPlayers.forEach((obj) => {
       let player = selected.find((ee) => ee.id === obj.id);
       if (player) {
         obj.selected = true;
@@ -124,14 +124,14 @@ export default class App extends React.Component {
     });
 
     // choose "the rest" of the team (need 3 more outfield players who aren't already selected)
-    var theRest = this.newPlayers
+    var theRest = newPlayers
       .filter((obj) => obj.selected === false && obj.element_type !== 1)
       .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, 3);
 
     selected = selected.concat(theRest);
 
-    this.newPlayers.forEach((obj) => {
+    newPlayers.forEach((obj) => {
       let player = selected.find((ee) => ee.id === obj.id);
       if (player) {
         obj.selected = true;
@@ -140,25 +140,26 @@ export default class App extends React.Component {
 
     const newFormation =
       String(
-        this.newPlayers.filter(
+        newPlayers.filter(
           (obj) => obj.selected === true && obj.element_type === 2
         ).length
       ) +
       String(
-        this.newPlayers.filter(
+        newPlayers.filter(
           (obj) => obj.selected === true && obj.element_type === 3
         ).length
       ) +
       String(
-        this.newPlayers.filter(
+        newPlayers.filter(
           (obj) => obj.selected === true && obj.element_type === 4
         ).length
       );
 
-    this.setState({
-      myPlayers: this.newPlayers,
-      formation: newFormation,
-    });
+    return [newPlayers, newFormation];
+    // this.setState({
+    //   myPlayers: this.newPlayers,
+    //   formation: newFormation,
+    // });
   };
 
   getPlayers = () => {
@@ -202,33 +203,60 @@ export default class App extends React.Component {
         return axios.get(bootstrapURL);
       })
       .then((res) => {
-        this.setState(
-          {
-            myPlayers: res.data.elements.filter((el) => {
-              return this.state.myPlayersByEntryID.some((f) => {
-                return f.element === el.id;
-              });
-            }),
-            unownedPlayers: res.data.elements.filter((el) => {
-              return this.state.unownedPlayersByEntryID.some((f) => {
-                return f.element === el.id;
-              });
-            }),
-          },
-          () => {
-            this.findBestFormationOnLoad();
-            this.addCandidates();
+        let myPlayers = res.data.elements.filter(
+          (el) => {
+            return this.state.myPlayersByEntryID.some((f) => {
+              return f.element === el.id;
+            });
           }
+
+          // this.setState(
+          //   {
+          //     myPlayers: res.data.elements.filter((el) => {
+          //       return this.state.myPlayersByEntryID.some((f) => {
+          //         return f.element === el.id;
+          //       });
+          //     }),
+          //     unownedPlayers: res.data.elements.filter((el) => {
+          //       return this.state.unownedPlayersByEntryID.some((f) => {
+          //         return f.element === el.id;
+          //       });
+          //     }),
+          //  },
+          // () => {
+          //   this.findBestFormationOnLoad();
+          //   this.addCandidates();
+          // }
         );
+        // console.log("myPlayers: " + JSON.stringify(myPlayers));
+        let unownedPlayers = res.data.elements.filter((el) => {
+          return this.state.unownedPlayersByEntryID.some((f) => {
+            return f.element === el.id;
+          });
+        });
+        // console.log("unownedPlayers: " + JSON.stringify(unownedPlayers));
+        let results = this.findBestFormationOnLoad(myPlayers);
+        console.log(
+          "results[0]: " +
+            JSON.stringify(results[0]) +
+            " results[1]: " +
+            JSON.stringify(results[1])
+        );
+        let newPlayers = this.addCandidates(results[0], unownedPlayers);
+        console.log("NewPlayers: " + JSON.stringify(newPlayers));
+        this.setState({ myPlayers: newPlayers, formation: results[1] }, () => {
+          console.log("Done");
+        });
       })
       .catch((error) => console.log(error.response));
   };
 
-  addCandidates = () => {
+  addCandidates = (pnewPlayers, unownedPlayers) => {
     // console.log("unownedPlayers: " + JSON.stringify(this.state.unownedPlayers));
-    let newPlayers = this.state.myPlayers;
-    this.newPlayers.forEach((obj, index) => {
-      let candidates = this.state.unownedPlayers.filter(
+    // let newPlayers = this.state.myPlayers;
+    let newPlayers = pnewPlayers;
+    newPlayers.forEach((obj, index) => {
+      let candidates = unownedPlayers.filter(
         (ee) =>
           ee.element_type === obj.element_type && ee.ict_index > obj.ict_index
       );
@@ -241,16 +269,18 @@ export default class App extends React.Component {
     //   "newPlayers after adding candidates from unowned: " +
     //     JSON.stringify(newPlayers)
     // );
-    this.setState(
-      {
-        myPlayers: newPlayers,
-      }
-      // () => {
-      //   console.log(
-      //     "CANDIDATES UPDATED: " + JSON.stringify(this.state.myPlayers)
-      //   );
-      // }
-    );
+
+    return newPlayers;
+    // this.setState(
+    //   {
+    //     myPlayers: newPlayers,
+    //   }
+    //   // () => {
+    //   //   console.log(
+    //   //     "CANDIDATES UPDATED: " + JSON.stringify(this.state.myPlayers)
+    //   //   );
+    //   // }
+    // );
   };
 
   render() {
