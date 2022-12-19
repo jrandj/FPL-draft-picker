@@ -1,5 +1,5 @@
 language: python
-before_script:
+before_install:
   - cd app
 python:
 - '3.9.7'
