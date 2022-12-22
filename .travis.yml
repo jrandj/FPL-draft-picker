@@ -2,7 +2,7 @@ language: python
 before_script:
   - cd app
 python:
-- '3.10.7'
+- '3.9.7'
 install:
 - pipenv install
 script:
