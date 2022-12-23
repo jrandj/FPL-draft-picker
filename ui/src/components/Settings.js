@@ -61,26 +61,13 @@ export default class Settings extends React.Component {
           Candidates (shown on player selection)
         </p>
         <div className="Candidates">
+          {/* {console.log("In Settings with selectedPlayer: " + JSON.stringify(this.props.selectedPlayer))} */}
           {this.props.selectedPlayer &&
-            (console.log("players: " + JSON.stringify(this.props.myPlayers)),
+            (console.log("In Candidates with selected player: " + JSON.stringify(this.props.myPlayers)),
             this.props.selectedPlayer.candidates.map((player) => (
               <Candidate player={player}></Candidate>
             )))}
         </div>
-        {/* {this.props.selectedPlayers.length < 11 &&
-            this.state.value !== "" &&
-            this.props.results.map((player) => (
-              // Create result list from search results
-              <SearchResult
-                player={player}
-                selectPlayer={this.props.selectPlayer}
-                updateValue={this.updateValue}
-                key={`Result${player.id}`}
-                lastPlayerToAdd={this.props.selectedPlayers.length === 10}
-                logoPlaceholder={this.props.logoPlaceholder}
-                portraitPlaceholder={this.props.portraitPlaceholder}
-              />
-            ))} */}
         <div className="Submit">
           <DropdownButton
             className="Dropdown"

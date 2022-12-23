@@ -3,32 +3,13 @@ import pitchImage from "../data/pitch.svg";
 import PlayerCard from "./PlayerCard";
 
 export default class Pitch extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   // this.state = {
-  //   //   value: this.props,
-  //   // };
-  // }
-  // componentDidUpdate(prevProps) {
-  //   console.log(
-  //     "component did update... prevProps: " +
-  //       JSON.stringify(prevProps) +
-  //       " this.props: " +
-  //       JSON.stringify(this.props)
-  //   );
-  //   if (prevProps.value !== this.props.value) {
-  //     console.log("props did change...");
-  //     this.setState({ value: this.props.value });
-  //   }
-  // }
   render() {
     const setSelectedPlayer = (event) => {
-      // console.log("Receiving event at Pitch: " + JSON.stringify(event));
       this.props.setSelectedPlayer(event);
     };
-    console.log(
-      "players receiving at Pitch " + JSON.stringify(this.props.myPlayers)
-    );
+    // console.log(
+    //   "players receiving at Pitch " + JSON.stringify(this.props.myPlayers)
+    // );
     return (
       <div className="Pitch">
         <img className="Outlines" src={pitchImage} alt="Pitch outlines" />
@@ -40,9 +21,7 @@ export default class Pitch extends React.Component {
                 <div
                   className="Flexbox-Row-Item"
                   key={o.id}
-                  // onClick={setSelectedPlayer(o.id)}
                 >
-                  {/* {console.log("player passing is " + JSON.stringify(o))} */}
                   <PlayerCard
                     setSelectedPlayer={setSelectedPlayer}
                     player={o}
