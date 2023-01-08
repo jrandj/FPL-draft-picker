@@ -23,6 +23,7 @@ urllib3 = "==1.26.13"
 webencodings = "==0.5.1"
 django = "*"
 djangorestframework = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 

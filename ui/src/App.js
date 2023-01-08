@@ -44,7 +44,7 @@ export default class App extends React.Component {
   addPlayersToFormation = () => {
     this.newPlayers = this.state.myPlayers.map((v) => ({
       ...v,
-      selected: false
+      selected: false,
     }));
 
     var goalkeepers = this.newPlayers
@@ -158,15 +158,20 @@ export default class App extends React.Component {
   };
 
   getPlayers = () => {
+    // const detailsURL =
+    //   "https://draft.premierleague.com/api/league/" +
+    //   this.state.leagueID +
+    //   "/details";
     const detailsURL =
-      "https://draft.premierleague.com/api/league/" +
-      this.state.leagueID +
-      "/details";
+      "http://127.0.0.1:8000/app/details/" + this.state.leagueID;
+    // const elementsURL =
+    //   "https://draft.premierleague.com/api/league/" +
+    //   this.state.leagueID +
+    //   "/element-status";
     const elementsURL =
-      "https://draft.premierleague.com/api/league/" +
-      this.state.leagueID +
-      "/element-status";
-    const bootstrapURL = "https://draft.premierleague.com/api/bootstrap-static";
+      "http://127.0.0.1:8000/app/elements/" + this.state.leagueID;
+    // const bootstrapURL = "https://draft.premierleague.com/api/bootstrap-static";
+    const bootstrapURL = "http://127.0.0.1:8000/app/boostrap";
 
     axios
       .get(detailsURL)
@@ -180,27 +185,23 @@ export default class App extends React.Component {
         return axios.get(elementsURL);
       })
       .then((res) => {
-        this.setState(
-          {
-            // find players by entry_id
-            myPlayersByEntryID: res.data.element_status.filter(
-              (x) => x.owner === this.state.entryId
-            ),
-            unownedPlayersByEntryID: res.data.element_status.filter(
-              (x) => x.owner === null
-            ),
-          }
-        );
+        this.setState({
+          // find players by entry_id
+          myPlayersByEntryID: res.data.element_status.filter(
+            (x) => x.owner === this.state.entryId
+          ),
+          unownedPlayersByEntryID: res.data.element_status.filter(
+            (x) => x.owner === null
+          ),
+        });
         return axios.get(bootstrapURL);
       })
       .then((res) => {
-        let myPlayers = res.data.elements.filter(
-          (el) => {
-            return this.state.myPlayersByEntryID.some((f) => {
-              return f.element === el.id;
-            });
-          }
-        );
+        let myPlayers = res.data.elements.filter((el) => {
+          return this.state.myPlayersByEntryID.some((f) => {
+            return f.element === el.id;
+          });
+        });
         let unownedPlayers = res.data.elements.filter((el) => {
           return this.state.unownedPlayersByEntryID.some((f) => {
             return f.element === el.id;
@@ -208,7 +209,7 @@ export default class App extends React.Component {
         });
         let results = this.findBestFormationOnLoad(myPlayers);
         let newPlayers = this.addCandidates(results[0], unownedPlayers);
-       
+
         this.setState({ myPlayers: newPlayers, formation: results[1] }, () => {
           console.log("Setting player state: " + JSON.stringify(newPlayers));
         });
