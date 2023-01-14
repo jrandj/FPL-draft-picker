@@ -85,7 +85,7 @@ class Team:
         """
         formations = [{'GKP': 1, 'DEF': 5, 'MID': 3, 'FWD': 2, 'Score': 0},
                       {'GKP': 1, 'DEF': 5, 'MID': 4, 'FWD': 1, 'Score': 0},
-                      {'GKP': 1, 'DEF': 5, 'MID': 2, 'FWD': 3, 'Score': 0},
+                      # {'GKP': 1, 'DEF': 5, 'MID': 2, 'FWD': 3, 'Score': 0},
                       {'GKP': 1, 'DEF': 4, 'MID': 3, 'FWD': 3, 'Score': 0},
                       {'GKP': 1, 'DEF': 4, 'MID': 5, 'FWD': 1, 'Score': 0},
                       {'GKP': 1, 'DEF': 4, 'MID': 4, 'FWD': 2, 'Score': 0},
