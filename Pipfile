@@ -24,6 +24,7 @@ webencodings = "==0.5.1"
 django = "*"
 djangorestframework = "*"
 django-cors-headers = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
