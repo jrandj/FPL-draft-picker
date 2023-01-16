@@ -2,3 +2,6 @@
 __pycache__/
 *.csv
 *.xlsx
+*.html
+!index.html
+mysite/mysite/variables.env
