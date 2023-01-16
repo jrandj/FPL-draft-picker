@@ -69,7 +69,6 @@ class ProjectionsData:
             # Todo: Figure out how to catch authentication failure when posting to the session instead.
             print("No data can be read from Fantasy Football Scout, please check your credentials.")
             raise SystemExit(err)
-
         return sixGameProjections, seasonProjections
 
     def align_six_game_projections_with_official(self):

@@ -164,24 +164,21 @@ class Team:
 
         for i in self.playersInTeam:
             printDictPoints = OrderedDict((k, i[k]) for k in (
-                'web_name', 'team_name', 'position_name', sixGameProjectionHeader, nextGameWeekHeader,
-                str(sixGameProjectionHeader + ' Candidates'),
-                str(nextGameWeekHeader + ' Pts Candidates')))
+                'web_name', 'team_name', 'position_name', '6GW Pts Projection', 'NGW Pts Projection',
+                '6GW Candidates', 'NGW Candidates'))
             printListPoints.append(printDictPoints)
             printDictIctIndex = OrderedDict(
                 (k, i[k]) for k in ('web_name', 'team_name', 'position_name', 'ict_index', 'ict_index_candidates'))
             printListIctIndex.append(printDictIctIndex)
 
-        sortedPrintListPoints = sorted(printListPoints, key=lambda x: (x['position_name'], -x[sixGameProjectionHeader]))
+        sortedPrintListPoints = sorted(printListPoints, key=lambda x: (x['position_name'], -x['6GW Pts Projection']))
         sortedPrintListIctIndex = sorted(printListIctIndex, key=lambda x: (x['position_name'], -float(x['ict_index'])))
-        # print(tabulate(sortedPrintListPoints, headers="keys", tablefmt="github"))
-        # print(tabulate(sortedPrintListIctIndex, headers="keys", tablefmt="github"))
 
         expected_results = [i for i in self.consolidatedData.officialAPIData.players['elements'] if i['status'] != 'u']
         failed_merge = [i for i in self.consolidatedData.officialAPIData.players['elements'] if
                         i['merge_status_six_game'] != 'both' and i['status'] != 'u']
         no_projections = [i for i in self.consolidatedData.officialAPIData.players['elements'] if
-                          math.isnan(i[sixGameProjectionHeader]) and i['status'] != 'u' and i[
+                          math.isnan(i['6GW Pts Projection']) and i['status'] != 'u' and i[
                               'merge_status_six_game'] == 'both']
         failed_merge_player_info = [
             [i["web_name_clean"], i["team_name"], i["position_name"], i["merge_status_six_game"]]
@@ -191,7 +188,13 @@ class Team:
             for i in no_projections]
 
         candidates_representation = str(
-            tabulate(sortedPrintListPoints, headers="keys", tablefmt="html", stralign="left", numalign="left",
+            tabulate(sortedPrintListPoints, headers={"web_name": "web_name", "team_name": "team_name",
+                                                     "position_name": "position_name",
+                                                     "6GW Pts Projection": sixGameProjectionHeader,
+                                                     "NGW Pts Projection": nextGameWeekHeader, '6GW Candidates': str(
+                    sixGameProjectionHeader + ' Candidates'), 'NGW Candidates': str(
+                    nextGameWeekHeader + ' Pts Candidates')},
+                     tablefmt="html", stralign="left", numalign="left",
                      colalign="left") + "<br>" +
             tabulate(sortedPrintListIctIndex, headers="keys", tablefmt="html", stralign="left", numalign="left",
                      colalign="left") +
