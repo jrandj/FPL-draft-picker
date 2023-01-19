@@ -1,6 +1,3 @@
-import requests
-
-
 class OfficialAPIData:
     """
     A class that contains data from the official API.
@@ -9,17 +6,15 @@ class OfficialAPIData:
     ----------
     leagueID : sequence
         The unique identifier for the league.
-    players : object
+    players : dict
         The player data.
-    playerAvailability : object
+    playerAvailability : dict
         The player availability data.
-    league : object
+    league : dict
         The league data.
 
     Methods
     -------
-    import_data()
-        Import Official API data.
     add_availability_to_players()
         Augment player data with information from playerAvailability.
     id_to_entry_id():
@@ -28,46 +23,12 @@ class OfficialAPIData:
         Gets the entry name from the entity ID.
     """
 
-    def __init__(self, leagueID):
+    def __init__(self, leagueID, API_results):
         self.leagueID = leagueID
-        self.players, self.playerAvailability, self.league = self.import_data(leagueID)
+        self.players = API_results[0]
+        self.playerAvailability = API_results[1]
+        self.league = API_results[2]
         self.add_availability_to_players()
-
-    @staticmethod
-    def import_data(leagueID):
-        """Import Official API data.
-
-        Parameters
-        ----------
-        leagueID : sequence
-            The unique identifier for the league.
-
-        Raises
-        ------
-        requests.exceptions.HTTPError:
-            If any HTTP errors are encountered when retrieving data.
-        """
-
-        try:
-            r1 = requests.get(url='https://draft.premierleague.com/api/bootstrap-static')
-            r1.raise_for_status()
-            players = r1.json()
-        except requests.exceptions.HTTPError as err:
-            raise SystemExit(err)
-        try:
-            r2 = requests.get(url="https://draft.premierleague.com/api/league/" + str(leagueID) + "/element-status")
-            r2.raise_for_status()
-            playerAvailability = r2.json()
-        except requests.exceptions.HTTPError as err:
-            raise SystemExit(err)
-        try:
-            r3 = requests.get(url="https://draft.premierleague.com/api/league/" + str(leagueID) + "/details")
-            r3.raise_for_status()
-            league = r3.json()
-        except requests.exceptions.HTTPError as err:
-            raise SystemExit(err)
-
-        return players, playerAvailability, league
 
     def add_availability_to_players(self):
         """Augment player data with information from playerAvailability.

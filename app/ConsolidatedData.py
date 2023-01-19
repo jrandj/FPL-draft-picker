@@ -1,4 +1,7 @@
 import pandas as pd
+import ssl
+import aiohttp
+import asyncio
 
 from Team import Team
 from OfficialAPIData import OfficialAPIData
@@ -30,10 +33,20 @@ class ConsolidatedData:
 
     Methods
     -------
+    load_official_data()
+        Load the data from the official FPL APIs.
+    load_projections_data()
+        Load the data from the projection APIs.
+    fetch_projection()
+	    Make an API call for a projections URL.
+    fetch_all_projections()
+        Import projections data from Fantasy Football Scout
+    fetch_official()
+        Make an API call for an official URL.
+    fetch_all_official()
+        Import data from the official FPL API.
     get_formations()
         Return team formations in descending order with the highest scoring at the top.
-    add_total_points_to_players()
-        Add the total projected scores to the players object.
     add_candidates_to_players_based_on_projections()
         Find candidates who have a better six game projection than existing players in the team and add the list
         to the players object.
@@ -46,11 +59,146 @@ class ConsolidatedData:
         self.leagueID = leagueID
         self.fantasyFootballScoutUsername = fantasyFootballScoutUsername
         self.fantasyFootballScoutPassword = fantasyFootballScoutPassword
-        self.officialAPIData = OfficialAPIData(self.leagueID)
-        self.projectionsData = ProjectionsData(self.fantasyFootballScoutUsername, self.fantasyFootballScoutPassword)
+        official_response_data = self.load_official_data()
+        projections_response_data = self.load_projections_data()
+        self.officialAPIData = OfficialAPIData(self.leagueID, official_response_data)
+        self.projectionsData = ProjectionsData(projections_response_data)
         self.teamID = self.get_teamID_from_teamName()
         self.add_candidates_to_players_based_on_projections()
         self.nextGameWeek = 'GW' + str(self.officialAPIData.players['events']['next'])
+
+    def load_official_data(self):
+        """Load Official API data.
+
+        Parameters
+        ----------
+
+        Raises
+        ------
+
+        """
+        loop = asyncio.get_event_loop()
+        urls = ["https://draft.premierleague.com/api/bootstrap-static",
+                "https://draft.premierleague.com/api/league/" + str(self.leagueID) + "/element-status",
+                "https://draft.premierleague.com/api/league/" + str(self.leagueID) + "/details"]
+        results = loop.run_until_complete(ConsolidatedData.fetch_all_official(urls, loop))
+        return results
+
+    def load_projections_data(self):
+        """Load projections data from Fantasy Football Scout.
+
+        Parameters
+        ----------
+
+        Raises
+        ------
+        ValueError:
+            If the projections API responses cannot be parsed.
+        """
+        # try:
+        loop = asyncio.get_event_loop()
+        urls = ["https://members.fantasyfootballscout.co.uk/projections/six-game-projections/",
+                "https://members.fantasyfootballscout.co.uk/projections/season-projections/"]
+        results = loop.run_until_complete(self.fetch_all_projections(urls, loop))
+
+        try:
+            results[0] = pd.read_html(results[0])
+            results[1] = pd.read_html(results[1])
+        except ValueError as err:
+            # Todo: Figure out how to catch authentication failure when posting to the session instead.
+            print("No data can be read from Fantasy Football Scout, please check your credentials.")
+            raise SystemExit(err)
+
+        return results
+
+    @staticmethod
+    async def fetch_projection(session, url):
+        """Make an API call for a projections URL.
+
+        Parameters
+        ----------
+        url : str
+            The current URL to request from.
+        loop : aiohttp.client.ClientSession
+            The session object.
+
+        Raises
+        ------
+
+        """
+        async with session.get(url, ssl=ssl.SSLContext()) as response:
+            return await response.text()
+
+    async def fetch_all_projections(self, urls, loop):
+        """Import projections data from Fantasy Football Scout.
+
+        Parameters
+        ----------
+        urls : list
+            The JSON containing player data from a team.
+        loop : asyncio.windows_events.ProactorEventLoop
+            The asyncio loop object.
+
+        Raises
+        ------
+        SystemExit:
+            If a response cannot be obtained from the API.
+        """
+        try:
+            async with aiohttp.ClientSession(loop=loop) as session:
+                await session.post('https://members.fantasyfootballscout.co.uk/',
+                                   data={'username': self.fantasyFootballScoutUsername,
+                                         'password': self.fantasyFootballScoutPassword,
+                                         'login': '>+Log+In'})
+                results = await asyncio.gather(*[ConsolidatedData.fetch_projection(session, url) for url in urls],
+                                               return_exceptions=True)
+                return results
+        except ValueError as err:
+            print("Error calling projections API.")
+            raise SystemExit(err)
+
+    @staticmethod
+    async def fetch_official(session, url):
+        """Make an API call for an official URL.
+
+        Parameters
+        ----------
+        url : str
+            The current URL to request from.
+        loop : aiohttp.client.ClientSession
+            The session object.
+
+        Raises
+        ------
+
+        """
+        async with session.get(url, ssl=ssl.SSLContext()) as response:
+            return await response.json()
+
+    @staticmethod
+    async def fetch_all_official(urls, loop):
+        """Import data from the official FPL API.
+
+        Parameters
+        ----------
+        urls : list
+            The JSON containing player data from a team.
+        loop : asyncio.windows_events.ProactorEventLoop
+            The asyncio loop object.
+
+        Raises
+        ------
+        SystemExit:
+            If a response cannot be obtained from the API.
+        """
+        try:
+            async with aiohttp.ClientSession(loop=loop) as session:
+                results = await asyncio.gather(*[ConsolidatedData.fetch_official(session, url) for url in urls],
+                                               return_exceptions=True)
+                return results
+        except ValueError as err:
+            print("Error calling official API.")
+            raise SystemExit(err)
 
     @staticmethod
     def get_formations(team, nextGameWeekHeader):
