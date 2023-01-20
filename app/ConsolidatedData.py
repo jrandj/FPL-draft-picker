@@ -201,15 +201,13 @@ class ConsolidatedData:
             raise SystemExit(err)
 
     @staticmethod
-    def get_formations(team, nextGameWeekHeader):
+    def get_formations(team):
         """Return team formations in descending order with the highest scoring at the top.
 
         Parameters
         ----------
         team : dict
             The JSON containing player data from a team.
-        nextGameWeekHeader : string
-            The key for the projected points of the upcoming game week.
 
         Raises
         ------
@@ -225,14 +223,14 @@ class ConsolidatedData:
         player_index = 0
         total_points = 0
         current_formation = {'GKP': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
-        team.sort(key=lambda x: (x['position_name'], -x[nextGameWeekHeader]))
+        team.sort(key=lambda x: (x['position_name'], -x['NGW Pts Projection']))
         for formation in formations:
             team_copy = team.copy()
             while current_formation != formation and len(team_copy) > player_index:
                 current_player = team_copy[player_index]
                 # This approach assumes the team is sorted by projected points in the next game week
                 if Team.add_player_to_formation(current_player, current_formation, formation):
-                    total_points += current_player[nextGameWeekHeader]
+                    total_points += current_player['NGW Pts Projection']
                     del team_copy[player_index]
                     player_index = 0
                 else:

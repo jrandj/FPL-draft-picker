@@ -53,14 +53,9 @@ class Fixture:
                     self.consolidatedData)
                 fixture = {
                     "player_one": self.consolidatedData.officialAPIData.id_to_entry_name(match['league_entry_1']),
-                    "player_one_score": self.consolidatedData.get_formations(player_one_players,
-                                                                             self.consolidatedData.nextGameWeek)[
-                        0]['Score'],
+                    "player_one_score": self.consolidatedData.get_formations(player_one_players)[0]['Score'],
                     "player_two": self.consolidatedData.officialAPIData.id_to_entry_name(match['league_entry_2']),
-                    "player_two_score": self.consolidatedData.get_formations(player_two_players,
-                                                                             self.consolidatedData.nextGameWeek)[
-                        0][
-                        'Score']
+                    "player_two_score": self.consolidatedData.get_formations(player_two_players)[0]['Score']
                 }
                 fixtures.append(fixture)
                 game_count = game_count + 1

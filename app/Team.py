@@ -43,7 +43,7 @@ class Team:
         self.teamID = teamID
         self.consolidatedData = consolidatedData
         self.playersInTeam = self.get_players_for_team(self.teamID, self.consolidatedData)
-        self.formations = self.get_formations_for_team(self.playersInTeam, self.consolidatedData)
+        self.formations = self.get_formations_for_team(self.playersInTeam)
         self.candidates_representation = self.generate_candidates_representation()
         self.formations_representation = self.generate_formations_representation()
 
@@ -69,7 +69,7 @@ class Team:
         return team
 
     @staticmethod
-    def get_formations_for_team(playersInTeam, consolidatedData):
+    def get_formations_for_team(playersInTeam):
         """Return team formations in descending order with the highest scoring at the top.
 
         Parameters
@@ -85,7 +85,6 @@ class Team:
         """
         formations = [{'GKP': 1, 'DEF': 5, 'MID': 3, 'FWD': 2, 'Score': 0},
                       {'GKP': 1, 'DEF': 5, 'MID': 4, 'FWD': 1, 'Score': 0},
-                      # {'GKP': 1, 'DEF': 5, 'MID': 2, 'FWD': 3, 'Score': 0},
                       {'GKP': 1, 'DEF': 4, 'MID': 3, 'FWD': 3, 'Score': 0},
                       {'GKP': 1, 'DEF': 4, 'MID': 5, 'FWD': 1, 'Score': 0},
                       {'GKP': 1, 'DEF': 4, 'MID': 4, 'FWD': 2, 'Score': 0},
@@ -94,15 +93,14 @@ class Team:
         player_index = 0
         total_points = 0
         current_formation = {'GKP': 0, 'DEF': 0, 'MID': 0, 'FWD': 0}
-        nextGameWeek = consolidatedData.nextGameWeek
-        playersInTeam.sort(key=lambda x: (x['position_name'], -x[nextGameWeek]))
+        playersInTeam.sort(key=lambda x: (x['position_name'], -x['NGW Pts Projection']))
         for formation in formations:
             team_copy = playersInTeam.copy()
             while current_formation != formation and len(team_copy) > player_index:
                 current_player = team_copy[player_index]
                 # This approach assumes the team is sorted by projected points in the next game week
                 if Team.add_player_to_formation(current_player, current_formation, formation):
-                    total_points += current_player[nextGameWeek]
+                    total_points += current_player['NGW Pts Projection']
                     del team_copy[player_index]
                     player_index = 0
                 else:
