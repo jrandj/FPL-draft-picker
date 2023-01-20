@@ -267,4 +267,8 @@ class ProjectionsData:
         self.sixGameProjections[0]['Name'].loc[
             self.sixGameProjections[0]['Name'].str.contains('Richards \(Chris\)') &
             self.sixGameProjections[0]['Team'].str.contains('CRY')] = 'Richards'
+        self.sixGameProjections[0]['Name'].loc[
+            self.sixGameProjections[0]['Name'].str.contains('João Félix')] = 'Joao Felix'
+        self.sixGameProjections[0]['Name'].loc[
+            self.sixGameProjections[0]['Name'].str.contains('Wöber')] = 'Wober'
         return
