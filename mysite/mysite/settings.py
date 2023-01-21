@@ -9,8 +9,12 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
+from distutils.util import strtobool
 from pathlib import Path
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv('variables.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-n4j1!^^5l66k=w9n=_29r1et+k_4jaul9)7_yi0f0w57m()i6("
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = strtobool(os.getenv("DEBUG", "false"))
 
 ALLOWED_HOSTS = []
 
@@ -121,6 +125,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ORIGIN_ALLOW_ALL = False
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(",")
