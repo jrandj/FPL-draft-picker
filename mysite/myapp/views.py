@@ -32,7 +32,7 @@ def get_element_status(request, league_id):
 
 
 @api_view(['GET'])
-def get_boostrap(request):
+def get_bootstrap(request):
     try:
         r1 = requests.get(url='https://draft.premierleague.com/api/bootstrap-static')
         r1.raise_for_status()
