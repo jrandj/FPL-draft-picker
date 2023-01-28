@@ -77,7 +77,7 @@ class ConsolidatedData:
         ------
 
         """
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
         urls = ["https://draft.premierleague.com/api/bootstrap-static",
                 "https://draft.premierleague.com/api/league/" + str(self.leagueID) + "/element-status",
                 "https://draft.premierleague.com/api/league/" + str(self.leagueID) + "/details"]
@@ -95,8 +95,7 @@ class ConsolidatedData:
         ValueError:
             If the projections API responses cannot be parsed.
         """
-        # try:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
         urls = ["https://members.fantasyfootballscout.co.uk/projections/six-game-projections/",
                 "https://members.fantasyfootballscout.co.uk/projections/season-projections/"]
         results = loop.run_until_complete(self.fetch_all_projections(urls, loop))
@@ -119,7 +118,7 @@ class ConsolidatedData:
         ----------
         url : str
             The current URL to request from.
-        loop : aiohttp.client.ClientSession
+        session : aiohttp.client.ClientSession
             The session object.
 
         Raises
@@ -165,7 +164,7 @@ class ConsolidatedData:
         ----------
         url : str
             The current URL to request from.
-        loop : aiohttp.client.ClientSession
+        session : aiohttp.client.ClientSession
             The session object.
 
         Raises
