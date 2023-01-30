@@ -5,7 +5,8 @@ export default class Candidate extends React.Component {
     return (
       <p className="Result-player">
         {
-          this.props.player.web_name
+          this.props.unownedPlayers.find((o) => o.id === this.props.player[0])
+            .web_name
         }
       </p>
     );

@@ -384,6 +384,7 @@ export default class App extends React.Component {
             formation={this.state.formation}
             formations={this.state.formations}
             myPlayers={this.state.myPlayers}
+            unownedPlayers={this.state.unownedPlayers}
             selectedPlayer={this.state.selectedPlayer}
           />
         </div>

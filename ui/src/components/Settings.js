@@ -63,9 +63,18 @@ export default class Settings extends React.Component {
         <div className="Candidates">
           {/* {console.log("In Settings with selectedPlayer: " + JSON.stringify(this.props.selectedPlayer))} */}
           {this.props.selectedPlayer &&
-            (console.log("In Candidates with selected player: " + JSON.stringify(this.props.myPlayers)),
+            (console.log(
+              "In Candidates with selected player.candidates: " +
+                JSON.stringify(this.props.selectedPlayer.candidates)
+            ),
+            console.log(
+              "unownedPlayers: " + JSON.stringify(this.props.unownedPlayers)
+            ),
             this.props.selectedPlayer.candidates.map((player) => (
-              <Candidate player={player}></Candidate>
+              <Candidate
+                player={player}
+                unownedPlayers={this.props.unownedPlayers}
+              ></Candidate>
             )))}
         </div>
         <div className="Submit">
