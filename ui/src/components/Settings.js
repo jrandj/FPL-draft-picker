@@ -1,7 +1,7 @@
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-import Candidate from "./Candidate";
+import CandidatesTable from "./CandidatesTable";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default class Settings extends React.Component {
@@ -70,12 +70,12 @@ export default class Settings extends React.Component {
             console.log(
               "unownedPlayers: " + JSON.stringify(this.props.unownedPlayers)
             ),
-            this.props.selectedPlayer.candidates.map((player) => (
-              <Candidate
-                player={player}
+            (
+              <CandidatesTable
+                player={this.props.selectedPlayer}
                 unownedPlayers={this.props.unownedPlayers}
-              ></Candidate>
-            )))}
+              ></CandidatesTable>
+            ))}
         </div>
         <div className="Submit">
           <DropdownButton

@@ -137,8 +137,10 @@ h1 {
   border-style: solid;
 }
 
-.Settings .Result-player:not(:last-child) {
+.Settings .Result-player {
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  margin: 0;
+  padding: 0;
 }
 
 .Settings .Candidates {
@@ -148,4 +150,21 @@ h1 {
   overflow-y: scroll;
   border-radius: 3px;
   color: rgba(0, 0, 0, 0.95);
+}
+
+.tableFixHead thead th {
+  position: sticky; /* make the table heads sticky */
+  top: 0px; /* table head will be placed from the top of the table and sticks to it */
+}
+table {
+  border-collapse: collapse; /* make the table borders collapse to each other */
+  width: 100%;
+}
+th,
+td {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+}
+th {
+  background: #eee;
 }
