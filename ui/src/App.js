@@ -52,22 +52,26 @@ export default class App extends React.Component {
 
     var goalkeepers = this.newPlayers
       .filter((obj) => obj.element_type === 1)
-      .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
+      // .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, 1);
 
     var defenders = this.newPlayers
       .filter((obj) => obj.element_type === 2)
-      .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
+      // .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, parseInt(this.state.formation.charAt(0)));
 
     var midfielders = this.newPlayers
       .filter((obj) => obj.element_type === 3)
-      .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
+      // .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, parseInt(this.state.formation.charAt(1)));
 
     var attackers = this.newPlayers
       .filter((obj) => obj.element_type === 4)
-      .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
+      // .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, parseInt(this.state.formation.charAt(2)));
 
     const selected = goalkeepers.concat(defenders, midfielders, attackers);
@@ -100,22 +104,26 @@ export default class App extends React.Component {
 
     var goalkeepers = newPlayers
       .filter((obj) => obj.element_type === 1)
-      .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
+      // .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, 1);
 
     var defenders = newPlayers
       .filter((obj) => obj.element_type === 2)
-      .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
+      // .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, 3);
 
     var midfielders = newPlayers
       .filter((obj) => obj.element_type === 3)
-      .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
+      // .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, 3);
 
     var attackers = newPlayers
       .filter((obj) => obj.element_type === 4)
-      .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
+      // .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, 1);
 
     let selected = goalkeepers.concat(defenders, midfielders, attackers);
@@ -131,7 +139,8 @@ export default class App extends React.Component {
     // choose "the rest" of the team (need 3 more outfield players who aren't already selected)
     var theRest = newPlayers
       .filter((obj) => obj.selected === false && obj.element_type !== 1)
-      .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
+      // .sort((a, b) => b.ict_index - a.ict_index)
       .slice(0, 3);
 
     selected = selected.concat(theRest);
@@ -266,7 +275,9 @@ export default class App extends React.Component {
         myPlayers.forEach((obj, index) => {
           let candidates = res.data.filter((ee) => obj.id === ee.id);
           if (candidates) {
-            // console.log("Candidate is " + JSON.stringify(candidates[0]));
+            // console.log("Candidate are " + JSON.stringify(candidates[0]));
+            myPlayers[index].ngw_pts_projection =
+              candidates[0]["NGW Pts Projection"];
             myPlayers[index].candidates = candidates[0]["NGW Candidates"];
           }
         });
