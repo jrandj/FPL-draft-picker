@@ -47,7 +47,9 @@ export default class App extends React.Component {
   };
 
   setRankMethod = (newRankMethod) => {
-    this.setState({ rankMethod: newRankMethod }, () => {});
+    this.setState({ rankMethod: newRankMethod }, () => {
+      this.addPlayersToFormation();
+    });
   };
 
   addPlayersToFormation = () => {
