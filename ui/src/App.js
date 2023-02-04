@@ -17,11 +17,13 @@ export default class App extends React.Component {
       leagueID: "",
       teamName: "",
       teamID: "",
-      formation: "TBC",
+      formation: "442",
       formations: ["343", "352", "532", "541", "433", "442", "451"],
       selectedPlayer: "",
       pointsCandidates: "",
       projectionsResponse: "",
+      rankMethod: "NGW Pts Projection",
+      rankMethods: ["ICT Index", "NGW Pts Projection"],
     };
   }
   setSelectedPlayer = (player) => {
@@ -44,6 +46,10 @@ export default class App extends React.Component {
     });
   };
 
+  setRankMethod = (newRankMethod) => {
+    this.setState({ rankMethod: newRankMethod }, () => {});
+  };
+
   addPlayersToFormation = () => {
     this.newPlayers = this.state.myPlayers.map((v) => ({
       ...v,
@@ -52,26 +58,42 @@ export default class App extends React.Component {
 
     var goalkeepers = this.newPlayers
       .filter((obj) => obj.element_type === 1)
-      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
-      // .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => {
+        if (this.state.rankMethod === "NGW Pts Projections")
+          return b.ngw_pts_projection - a.ngw_pts_projection;
+        else if (this.state.rankMethod === "ICT Index")
+          return b.ict_index - a.ict_index;
+      })
       .slice(0, 1);
 
     var defenders = this.newPlayers
       .filter((obj) => obj.element_type === 2)
-      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
-      // .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => {
+        if (this.state.rankMethod === "NGW Pts Projections")
+          return b.ngw_pts_projection - a.ngw_pts_projection;
+        else if (this.state.rankMethod === "ICT Index")
+          return b.ict_index - a.ict_index;
+      })
       .slice(0, parseInt(this.state.formation.charAt(0)));
 
     var midfielders = this.newPlayers
       .filter((obj) => obj.element_type === 3)
-      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
-      // .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => {
+        if (this.state.rankMethod === "NGW Pts Projections")
+          return b.ngw_pts_projection - a.ngw_pts_projection;
+        else if (this.state.rankMethod === "ICT Index")
+          return b.ict_index - a.ict_index;
+      })
       .slice(0, parseInt(this.state.formation.charAt(1)));
 
     var attackers = this.newPlayers
       .filter((obj) => obj.element_type === 4)
-      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
-      // .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => {
+        if (this.state.rankMethod === "NGW Pts Projections")
+          return b.ngw_pts_projection - a.ngw_pts_projection;
+        else if (this.state.rankMethod === "ICT Index")
+          return b.ict_index - a.ict_index;
+      })
       .slice(0, parseInt(this.state.formation.charAt(2)));
 
     const selected = goalkeepers.concat(defenders, midfielders, attackers);
@@ -104,26 +126,42 @@ export default class App extends React.Component {
 
     var goalkeepers = newPlayers
       .filter((obj) => obj.element_type === 1)
-      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
-      // .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => {
+        if (this.state.rankMethod === "NGW Pts Projections")
+          return b.ngw_pts_projection - a.ngw_pts_projection;
+        else if (this.state.rankMethod === "ICT Index")
+          return b.ict_index - a.ict_index;
+      })
       .slice(0, 1);
 
     var defenders = newPlayers
       .filter((obj) => obj.element_type === 2)
-      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
-      // .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => {
+        if (this.state.rankMethod === "NGW Pts Projections")
+          return b.ngw_pts_projection - a.ngw_pts_projection;
+        else if (this.state.rankMethod === "ICT Index")
+          return b.ict_index - a.ict_index;
+      })
       .slice(0, 3);
 
     var midfielders = newPlayers
       .filter((obj) => obj.element_type === 3)
-      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
-      // .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => {
+        if (this.state.rankMethod === "NGW Pts Projections")
+          return b.ngw_pts_projection - a.ngw_pts_projection;
+        else if (this.state.rankMethod === "ICT Index")
+          return b.ict_index - a.ict_index;
+      })
       .slice(0, 3);
 
     var attackers = newPlayers
       .filter((obj) => obj.element_type === 4)
-      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
-      // .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => {
+        if (this.state.rankMethod === "NGW Pts Projections")
+          return b.ngw_pts_projection - a.ngw_pts_projection;
+        else if (this.state.rankMethod === "ICT Index")
+          return b.ict_index - a.ict_index;
+      })
       .slice(0, 1);
 
     let selected = goalkeepers.concat(defenders, midfielders, attackers);
@@ -139,8 +177,12 @@ export default class App extends React.Component {
     // choose "the rest" of the team (need 3 more outfield players who aren't already selected)
     var theRest = newPlayers
       .filter((obj) => obj.selected === false && obj.element_type !== 1)
-      .sort((a, b) => b.ngw_pts_projection - a.ngw_pts_projection)
-      // .sort((a, b) => b.ict_index - a.ict_index)
+      .sort((a, b) => {
+        if (this.state.rankMethod === "NGW Pts Projections")
+          return b.ngw_pts_projection - a.ngw_pts_projection;
+        else if (this.state.rankMethod === "ICT Index")
+          return b.ict_index - a.ict_index;
+      })
       .slice(0, 3);
 
     selected = selected.concat(theRest);
@@ -391,9 +433,12 @@ export default class App extends React.Component {
             setLeagueID={this.setLeagueID}
             setTeamName={this.setTeamName}
             setFormation={this.setFormation}
+            setRankMethod={this.setRankMethod}
             getPlayers={this.getPlayers}
             formation={this.state.formation}
             formations={this.state.formations}
+            rankMethod={this.state.rankMethod}
+            rankMethods={this.state.rankMethods}
             myPlayers={this.state.myPlayers}
             unownedPlayers={this.state.unownedPlayers}
             selectedPlayer={this.state.selectedPlayer}

@@ -28,6 +28,9 @@ export default class Settings extends React.Component {
     const onSetFormation = (event) => {
       this.props.setFormation(event);
     };
+    const onSetRankMethod = (event) => {
+      this.props.setRankMethod(event);
+    };
 
     return (
       <div className="Inputs">
@@ -89,9 +92,17 @@ export default class Settings extends React.Component {
               </Dropdown.Item>
             ))}
           </DropdownButton>
-          {/* <button className="PimpMyTeam" onClick={onGetMyTeam}>
-            Pimp my Team
-          </button> */}
+          <DropdownButton
+            className="Dropdown"
+            onSelect={onSetRankMethod}
+            title={`Rank Method: ${this.props.rankMethod}`}
+          >
+            {this.props.rankMethods.map((e) => (
+              <Dropdown.Item key={e} eventKey={e}>
+                {e}
+              </Dropdown.Item>
+            ))}
+          </DropdownButton>
           <button className="GetMyTeam" onClick={onGetMyTeam}>
             Get my Team
           </button>
