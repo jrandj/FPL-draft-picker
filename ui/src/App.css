@@ -75,21 +75,6 @@ h1 {
   bottom: 5px;
 }
 
-/* .Settings .Submit .PimpMyTeam {
-  position: relative;
-  width: 100%;
-  background: #fafafa;
-  color: rgba(0, 0, 0, 0.95);
-  font-size: 20px;
-  line-height: 26px;
-  padding: 10px 60px;
-  border-radius: 5px;
-  margin-top: 15px;
-  cursor: pointer;
-  vertical-align: right;
-  display: inline-block;
-} */
-
 .Settings .Submit .GetMyTeam {
   position: relative;
   width: 100%;
@@ -106,7 +91,6 @@ h1 {
 }
 
 .Flexbox-Row-Container {
-  /* top: 10px; */
   display: flex;
   justify-content: space-around;
   align-items: center;

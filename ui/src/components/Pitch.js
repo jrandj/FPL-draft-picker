@@ -7,9 +7,6 @@ export default class Pitch extends React.Component {
     const setSelectedPlayer = (event) => {
       this.props.setSelectedPlayer(event);
     };
-    // console.log(
-    //   "players receiving at Pitch " + JSON.stringify(this.props.myPlayers)
-    // );
     return (
       <div className="Pitch">
         <img className="Outlines" src={pitchImage} alt="Pitch outlines" />
@@ -18,10 +15,7 @@ export default class Pitch extends React.Component {
             .filter((val) => val.element_type === 1 && val.selected === true)
             .map(function (o) {
               return (
-                <div
-                  className="Flexbox-Row-Item"
-                  key={o.id}
-                >
+                <div className="Flexbox-Row-Item" key={o.id}>
                   <PlayerCard
                     setSelectedPlayer={setSelectedPlayer}
                     player={o}
