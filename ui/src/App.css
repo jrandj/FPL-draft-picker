@@ -146,7 +146,7 @@ h1 {
 .Settings .Candidates {
   background: #fafafa;
   margin-top: 5px;
-  max-height: 330px;
+  max-height: 230px;
   overflow-y: scroll;
   border-radius: 3px;
   color: rgba(0, 0, 0, 0.95);
