@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import Settings from "./components/Settings.js";
+import ControlPanel from "./components/ControlPanel.js";
 import Pitch from "./components/Pitch.js";
 import "./App.css";
 
@@ -302,8 +302,8 @@ export default class App extends React.Component {
   render() {
     return (
       <div id="app" className="App">
-        <div className="Settings">
-          <Settings
+        <div className="ControlPanel">
+          <ControlPanel
             setLeagueID={this.setLeagueID}
             setTeamName={this.setTeamName}
             setFormation={this.setFormation}
@@ -318,6 +318,7 @@ export default class App extends React.Component {
             selectedPlayer={this.state.selectedPlayer}
           />
         </div>
+
         <Pitch
           myPlayers={this.state.myPlayers}
           setSelectedPlayer={this.setSelectedPlayer}

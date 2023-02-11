@@ -63,19 +63,19 @@ h1 {
   z-index: 1;
 }
 
-.Settings {
+.ControlPanel {
   position: relative;
   width: 340px;
   height: 545px;
 }
 
-.Settings .Submit {
+.ControlPanel .Submit {
   position: absolute;
   width: 100%;
   bottom: 5px;
 }
 
-.Settings .Submit .GetMyTeam {
+.ControlPanel .Submit .GetMyTeam {
   position: relative;
   width: 100%;
   background: #fafafa;
@@ -121,13 +121,13 @@ h1 {
   border-style: solid;
 }
 
-.Settings .Result-player {
+.ControlPanel .Result-player {
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   margin: 0;
   padding: 0;
 }
 
-.Settings .Candidates {
+.Candidates {
   background: #fafafa;
   margin-top: 5px;
   max-height: 230px;

@@ -4,7 +4,7 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import CandidatesTable from "./CandidatesTable";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default class Settings extends React.Component {
+export default class ControlPanel extends React.Component {
   constructor(props) {
     super(props);
     this.leagueIDChangeHandlerRef = React.createRef();
@@ -63,6 +63,7 @@ export default class Settings extends React.Component {
         >
           Candidates (shown on player selection)
         </p>
+
         <div className="Candidates">
           {/* {console.log("In Settings with selectedPlayer: " + JSON.stringify(this.props.selectedPlayer))} */}
           {this.props.selectedPlayer &&
@@ -80,6 +81,7 @@ export default class Settings extends React.Component {
               ></CandidatesTable>
             ))}
         </div>
+
         <div className="Submit">
           <DropdownButton
             className="Dropdown"
