@@ -32,61 +32,44 @@ export default class ControlPanel extends React.Component {
       this.props.setRankMethod(event);
     };
 
-    return (
+    return [
       <div className="Inputs">
-        <div>
+        <div className="Input">
+          <label>
+            <b>League ID: </b>
+          </label>
           <input
-            className="Search-League-ID"
+            className="Input-League-ID"
             value={this.props.leagueID}
-            type="search"
+            type="text"
             onChange={leagueIDChangeHandler}
             placeholder="Enter your League ID..."
             ref={this.leagueIDChangeHandlerRef}
             autoFocus
           />
+        </div>
+        <div className="Input">
+          <label>
+            <b>Team: </b>
+          </label>
           <input
-            className="Search-Team-Name"
+            className="Input-Team-Name"
             value={this.props.teamName}
-            type="search"
+            type="text"
             onChange={teamNameChangeHandler}
             placeholder="Enter your Team Name..."
             ref={this.teamNameChangeHandlerRef}
             autoFocus
           />
         </div>
-        <p
-          style={{
-            margin: 0,
-            padding: 0,
-            fontWeight: "bold",
-          }}
-        >
-          Candidates (shown on player selection)
-        </p>
-
-        <div className="Candidates">
-          {/* {console.log("In Settings with selectedPlayer: " + JSON.stringify(this.props.selectedPlayer))} */}
-          {this.props.selectedPlayer &&
-            (console.log(
-              "In Candidates with selected player.candidates: " +
-                JSON.stringify(this.props.selectedPlayer.candidates)
-            ),
-            console.log(
-              "unownedPlayers: " + JSON.stringify(this.props.unownedPlayers)
-            ),
-            (
-              <CandidatesTable
-                player={this.props.selectedPlayer}
-                unownedPlayers={this.props.unownedPlayers}
-              ></CandidatesTable>
-            ))}
-        </div>
-
-        <div className="Submit">
+        <div className="DropDown">
+          <label>
+            <b>Formation: </b>
+          </label>
           <DropdownButton
-            className="Dropdown"
+            // className="DropdownButton"
             onSelect={onSetFormation}
-            title={`Formation: ${this.props.formation}`}
+            title={`${this.props.formation}`}
           >
             {this.props.formations.map((e) => (
               <Dropdown.Item key={e} eventKey={e}>
@@ -94,10 +77,15 @@ export default class ControlPanel extends React.Component {
               </Dropdown.Item>
             ))}
           </DropdownButton>
+        </div>
+        <div className="DropDown">
+          <label>
+            <b>Rank Method: </b>
+          </label>
           <DropdownButton
-            className="Dropdown"
+            // className="DropdownButton"
             onSelect={onSetRankMethod}
-            title={`Rank Method: ${this.props.rankMethod}`}
+            title={`${this.props.rankMethod}`}
           >
             {this.props.rankMethods.map((e) => (
               <Dropdown.Item key={e} eventKey={e}>
@@ -105,11 +93,29 @@ export default class ControlPanel extends React.Component {
               </Dropdown.Item>
             ))}
           </DropdownButton>
-          <button className="GetMyTeam" onClick={onGetMyTeam}>
-            Get my Team
-          </button>
         </div>
-      </div>
-    );
+      </div>,
+      <div className="Candidates">
+        {this.props.selectedPlayer &&
+          (console.log(
+            "In Candidates with selected player.candidates: " +
+              JSON.stringify(this.props.selectedPlayer.candidates)
+          ),
+          console.log(
+            "unownedPlayers: " + JSON.stringify(this.props.unownedPlayers)
+          ),
+          (
+            <CandidatesTable
+              player={this.props.selectedPlayer}
+              unownedPlayers={this.props.unownedPlayers}
+            ></CandidatesTable>
+          ))}
+      </div>,
+      <div className="Submit">
+        <button className="GetMyTeam" onClick={onGetMyTeam}>
+          Get my Team
+        </button>
+      </div>,
+    ];
   }
 }
