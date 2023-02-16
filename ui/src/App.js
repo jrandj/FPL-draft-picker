@@ -16,7 +16,7 @@ export default class App extends React.Component {
       leagueID: "",
       teamName: "",
       teamID: "",
-      formation: "442",
+      formation: "Highest Rated",
       formations: ["343", "352", "532", "541", "433", "442", "451"],
       selectedPlayer: "",
       pointsCandidates: "",
@@ -60,7 +60,7 @@ export default class App extends React.Component {
     var goalkeepers = this.newPlayers
       .filter((obj) => obj.element_type === 1)
       .sort((a, b) => {
-        if (this.state.rankMethod === "NGW Pts Projections")
+        if (this.state.rankMethod === "NGW Pts Projection")
           return b.ngw_pts_projection - a.ngw_pts_projection;
         else if (this.state.rankMethod === "ICT Index")
           return b.ict_index - a.ict_index;
@@ -70,7 +70,7 @@ export default class App extends React.Component {
     var defenders = this.newPlayers
       .filter((obj) => obj.element_type === 2)
       .sort((a, b) => {
-        if (this.state.rankMethod === "NGW Pts Projections")
+        if (this.state.rankMethod === "NGW Pts Projection")
           return b.ngw_pts_projection - a.ngw_pts_projection;
         else if (this.state.rankMethod === "ICT Index")
           return b.ict_index - a.ict_index;
@@ -80,7 +80,7 @@ export default class App extends React.Component {
     var midfielders = this.newPlayers
       .filter((obj) => obj.element_type === 3)
       .sort((a, b) => {
-        if (this.state.rankMethod === "NGW Pts Projections")
+        if (this.state.rankMethod === "NGW Pts Projection")
           return b.ngw_pts_projection - a.ngw_pts_projection;
         else if (this.state.rankMethod === "ICT Index")
           return b.ict_index - a.ict_index;
@@ -90,7 +90,7 @@ export default class App extends React.Component {
     var attackers = this.newPlayers
       .filter((obj) => obj.element_type === 4)
       .sort((a, b) => {
-        if (this.state.rankMethod === "NGW Pts Projections")
+        if (this.state.rankMethod === "NGW Pts Projection")
           return b.ngw_pts_projection - a.ngw_pts_projection;
         else if (this.state.rankMethod === "ICT Index")
           return b.ict_index - a.ict_index;
@@ -128,7 +128,7 @@ export default class App extends React.Component {
     var goalkeepers = newPlayers
       .filter((obj) => obj.element_type === 1)
       .sort((a, b) => {
-        if (this.state.rankMethod === "NGW Pts Projections")
+        if (this.state.rankMethod === "NGW Pts Projection")
           return b.ngw_pts_projection - a.ngw_pts_projection;
         else if (this.state.rankMethod === "ICT Index")
           return b.ict_index - a.ict_index;
@@ -138,17 +138,19 @@ export default class App extends React.Component {
     var defenders = newPlayers
       .filter((obj) => obj.element_type === 2)
       .sort((a, b) => {
-        if (this.state.rankMethod === "NGW Pts Projections")
+        if (this.state.rankMethod === "NGW Pts Projection")
           return b.ngw_pts_projection - a.ngw_pts_projection;
         else if (this.state.rankMethod === "ICT Index")
           return b.ict_index - a.ict_index;
       })
       .slice(0, 3);
 
+    console.log("Defenders are: " + JSON.stringify(defenders));
+
     var midfielders = newPlayers
       .filter((obj) => obj.element_type === 3)
       .sort((a, b) => {
-        if (this.state.rankMethod === "NGW Pts Projections")
+        if (this.state.rankMethod === "NGW Pts Projection")
           return b.ngw_pts_projection - a.ngw_pts_projection;
         else if (this.state.rankMethod === "ICT Index")
           return b.ict_index - a.ict_index;
@@ -158,7 +160,7 @@ export default class App extends React.Component {
     var attackers = newPlayers
       .filter((obj) => obj.element_type === 4)
       .sort((a, b) => {
-        if (this.state.rankMethod === "NGW Pts Projections")
+        if (this.state.rankMethod === "NGW Pts Projection")
           return b.ngw_pts_projection - a.ngw_pts_projection;
         else if (this.state.rankMethod === "ICT Index")
           return b.ict_index - a.ict_index;
@@ -179,7 +181,7 @@ export default class App extends React.Component {
     var theRest = newPlayers
       .filter((obj) => obj.selected === false && obj.element_type !== 1)
       .sort((a, b) => {
-        if (this.state.rankMethod === "NGW Pts Projections")
+        if (this.state.rankMethod === "NGW Pts Projection")
           return b.ngw_pts_projection - a.ngw_pts_projection;
         else if (this.state.rankMethod === "ICT Index")
           return b.ict_index - a.ict_index;
@@ -276,6 +278,7 @@ export default class App extends React.Component {
         });
 
         var results = this.findBestFormationOnLoad(myPlayers);
+        // this.addPlayersToFormation();
 
         this.setState(
           {
