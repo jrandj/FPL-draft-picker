@@ -7,7 +7,7 @@ export default class CandidatesTable extends React.Component {
         <thead>
           <tr>
             <th>Player</th>
-            <th>Projected NGW Pts</th>
+            <th>{this.props.rankMethod}</th>
           </tr>
         </thead>
         <tbody>

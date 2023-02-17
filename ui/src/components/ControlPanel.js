@@ -108,6 +108,7 @@ export default class ControlPanel extends React.Component {
             <CandidatesTable
               player={this.props.selectedPlayer}
               unownedPlayers={this.props.unownedPlayers}
+              rankMethod={this.props.rankMethod}
             ></CandidatesTable>
           ))}
       </div>,
