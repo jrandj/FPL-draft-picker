@@ -1,3 +1,9 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -20,7 +26,8 @@ h1 {
 
 .App {
   margin: 0 auto;
-  width: 900px;
+  width: 1180px;
+  height: 600px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -33,8 +40,8 @@ h1 {
 
 .Pitch {
   position: relative;
-  width: 540px;
-  height: 540px;
+  width: 70%;
+  height: 100%;
   background: #2e7d32;
   box-shadow: 0 3px 6px 1px rgba(0, 0, 0, 0.06);
   perspective: 800px;
@@ -53,7 +60,7 @@ h1 {
   position: absolute;
   display: block;
   transform-origin: bottom center;
-  transform: scale(1.41);
+  transform: scale(1.45);
   pointer-events: none;
   bottom: -13%;
   left: 5%;
@@ -65,8 +72,11 @@ h1 {
 
 .ControlPanel {
   position: relative;
-  width: 340px;
-  height: 545px;
+  height: 100%;
+  width: 30%;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .ControlPanel .Inputs {
@@ -74,7 +84,7 @@ h1 {
   width: 100%;
   background-color: grey;
   padding: 5px;
-  height: 28%;
+  flex: 1;
 }
 
 .ControlPanel .Inputs .Input {
@@ -84,11 +94,15 @@ h1 {
 }
 
 .ControlPanel .Inputs .Input .Input-League-ID {
+  position: relative;
   float: right;
+  min-width: 203px;
 }
 
 .ControlPanel .Inputs .Input .Input-Team-Name {
+  position: relative;
   float: right;
+  min-width: 203px;
 }
 
 .ControlPanel .Inputs .DropDown {
@@ -98,33 +112,43 @@ h1 {
 }
 
 .ControlPanel .Inputs .DropDown .dropdown {
+  position: relative;
   float: right;
 }
 
 .ControlPanel .Inputs .DropDown .dropdown .dropdown-toggle.btn.btn-primary {
+  position: relative;
+  line-height: 26px;
+  padding: 2px 12px;
+  border-radius: 5px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  vertical-align: left;
+  float: right;
   min-width: 203px;
 }
 
-.ControlPanel .Submit {
-  position: absolute;
-  width: 100%;
-  /* height: 5%; */
-  bottom: 5px;
-}
-
-.ControlPanel .Submit .GetMyTeam {
+.ControlPanel .Inputs .GetMyTeam {
   position: relative;
-  width: 100%;
-  background: #fafafa;
-  color: rgba(0, 0, 0, 0.95);
-  font-size: 20px;
   line-height: 26px;
-  padding: 10px 60px;
+  padding: 2px 12px;
   border-radius: 5px;
-  margin-top: 15px;
   cursor: pointer;
   vertical-align: left;
-  display: inline-block;
+  float: right;
+  min-width: 203px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  border: "3px solid";
+}
+
+.ControlPanel .Info {
+  position: relative;
+  width: 100%;
+  background-color: grey;
+  margin-top: 5px;
+  flex: 1;
 }
 
 .Flexbox-Row-Container {
@@ -136,6 +160,8 @@ h1 {
   z-index: 2;
   flex-grow: 1;
   flex-wrap: nowrap;
+  margin-left: 15%;
+  margin-right: 15%;
 }
 
 .Flexbox-Row-Item {
@@ -172,10 +198,9 @@ h1 {
   color: black;
   position: relative;
   width: 100%;
-  margin-top: 5px;
   background-color: gray;
-  height: 60%;
-  padding: 5px;
+  padding: 10px;
+  flex: 2;
 }
 
 .tableFixHead thead th {

@@ -94,7 +94,18 @@ export default class ControlPanel extends React.Component {
             ))}
           </DropdownButton>
         </div>
+        <div className="Input">
+          <button class="GetMyTeam" onClick={onGetMyTeam}>
+            Get my Team
+            {/* {this.props.rankMethods.map((e) => (
+              <Dropdown.Item key={e} eventKey={e}>
+                {e}
+              </Dropdown.Item>
+            ))} */}
+          </button>
+        </div>
       </div>,
+      <div className="Info"></div>,
       <div className="Candidates">
         {this.props.selectedPlayer &&
           (console.log(
@@ -111,11 +122,6 @@ export default class ControlPanel extends React.Component {
               rankMethod={this.props.rankMethod}
             ></CandidatesTable>
           ))}
-      </div>,
-      <div className="Submit">
-        <button className="GetMyTeam" onClick={onGetMyTeam}>
-          Get my Team
-        </button>
       </div>,
     ];
   }
