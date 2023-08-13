@@ -45,7 +45,7 @@ class OfficialAPIData:
                 str.maketrans({'í': 'i', 'ï': 'i', 'ß': 'ss', 'á': 'a', 'ä': 'a', 'é': 'e', 'ñ': 'n',
                                'ć': 'c', 'š': 's', 'Ö': 'O', 'Ø': 'O', 'ø': 'o', 'ö': 'o', 'ó': 'o', 'ü': 'u',
                                'ç': 'c', 'ú': 'u', 'Ü': 'U', 'ş': 's', 'ğ': 'g', 'ã': 'a', 'Ñ': 'N', 'Š': 'S',
-                               'ł': 'l', 'Á': 'A'}))
+                               'ł': 'l', 'Á': 'A', 'č': 'c', 'ž': 'z'}))
             self.players['elements'][i]['selected'] = 'No'
             self.players['elements'][i]['available'] = 'No'
 
