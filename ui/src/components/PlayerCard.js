@@ -1,5 +1,8 @@
 import React from "react";
 import playerImagePlaceholder from "../data/player.svg";
+import PlayerPopup from "./PlayerPopup";
+import { IoAlertCircleSharp } from "react-icons/io5";
+import "reactjs-popup/dist/index.css";
 
 export default class PlayerCard extends React.Component {
   render() {
@@ -11,13 +14,50 @@ export default class PlayerCard extends React.Component {
       <div
         className="PlayerCard"
         onClick={() => setSelectedPlayer(this.props.player)}
+        style={{ display: "flex", flexDirection: "column" }}
       >
-        <img
-          src={playerImagePlaceholder}
-          alt="Player"
-          style={{ width: "40%", height: "40%" }}
-        ></img>
-        <p
+        <div
+          className="PlayerCardHeader"
+          style={{ display: "flex", flexDirection: "row" }}
+        >
+          <div
+            className="PlayerCardStatus"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              width: "50%",
+              height: "50%",
+            }}
+          >
+            <IoAlertCircleSharp
+              style={{ color: "crimson" }}
+            ></IoAlertCircleSharp>
+          </div>
+          <div className="PlayerCardHeaderIcon">
+            <img
+              src={playerImagePlaceholder}
+              alt="Player"
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+            ></img>
+          </div>
+          <div
+            className="PlayerCardInfo"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              width: "50%",
+              height: "50%",
+            }}
+          >
+            <PlayerPopup></PlayerPopup>
+          </div>
+        </div>
+
+        <div
+          className="PlayerCardPoints"
           style={{
             margin: 0,
             padding: 0,
@@ -26,9 +66,12 @@ export default class PlayerCard extends React.Component {
             fontSize: 12,
           }}
         >
-          {this.props.player.team}
-        </p>
-        <p
+          {/* {this.props.player.team} */}
+          {this.props.player.ngw_pts_projection}
+        </div>
+
+        <div
+          className="PlayerCardName"
           style={{
             margin: 0,
             padding: 0,
@@ -38,7 +81,7 @@ export default class PlayerCard extends React.Component {
           }}
         >
           {this.props.player.web_name}
-        </p>
+        </div>
       </div>
     );
   }
